@@ -14,10 +14,10 @@ public partial class AppShellViewModel : ObservableObject
     private bool _invoicesExpanded = true;
 
     [ObservableProperty]
-    private bool _accountsExpanded = true;
+    private bool _accountsExpanded;
 
     [ObservableProperty]
-    private bool _settingsExpanded = true;
+    private bool _settingsExpanded;
 
     [ObservableProperty]
     private string? _activePageKey;
@@ -29,7 +29,7 @@ public partial class AppShellViewModel : ObservableObject
     public AppShellViewModel(IServiceProvider services)
     {
         _services = services;
-        GoPurchaseInvoices();
+        GoSupplierReport();
     }
 
     partial void OnInvoicesExpandedChanged(bool value) => OnPropertyChanged(nameof(InvoicesArrow));
@@ -37,13 +37,13 @@ public partial class AppShellViewModel : ObservableObject
     partial void OnSettingsExpandedChanged(bool value) => OnPropertyChanged(nameof(SettingsArrow));
 
     [RelayCommand]
-    private void ToggleInvoices() => InvoicesExpanded = !InvoicesExpanded;
+    private void ToggleInvoices() => ToggleSection("invoices");
 
     [RelayCommand]
-    private void ToggleAccounts() => AccountsExpanded = !AccountsExpanded;
+    private void ToggleAccounts() => ToggleSection("accounts");
 
     [RelayCommand]
-    private void ToggleSettings() => SettingsExpanded = !SettingsExpanded;
+    private void ToggleSettings() => ToggleSection("settings");
 
     [RelayCommand]
     private void GoPurchaseInvoices() => Navigate("purchases", () => _services.GetRequiredService<PurchaseInvoicesViewModel>());
@@ -80,7 +80,50 @@ public partial class AppShellViewModel : ObservableObject
 
     private void Navigate(string key, Func<PageViewModelBase> factory)
     {
+        ExpandForPageKey(key);
         ActivePageKey = key;
         CurrentPage = factory();
     }
+
+    private void ToggleSection(string section)
+    {
+        if (IsSectionExpanded(section))
+        {
+            InvoicesExpanded = false;
+            AccountsExpanded = false;
+            SettingsExpanded = false;
+            return;
+        }
+
+        ExpandOnly(section);
+    }
+
+    private void ExpandForPageKey(string key)
+    {
+        var section = key switch
+        {
+            "supplier-report" or "customer-report" or "expenses" => "invoices",
+            "purchases" or "sales" or "monthly" or "partners" => "accounts",
+            "products" or "suppliers" or "clients" or "capital" => "settings",
+            _ => null
+        };
+
+        if (section is not null)
+            ExpandOnly(section);
+    }
+
+    private void ExpandOnly(string section)
+    {
+        InvoicesExpanded = section == "invoices";
+        AccountsExpanded = section == "accounts";
+        SettingsExpanded = section == "settings";
+    }
+
+    private bool IsSectionExpanded(string section) => section switch
+    {
+        "invoices" => InvoicesExpanded,
+        "accounts" => AccountsExpanded,
+        "settings" => SettingsExpanded,
+        _ => false
+    };
 }

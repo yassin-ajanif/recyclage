@@ -10,11 +10,12 @@ namespace Recyclage.ViewModels;
 public partial class SupplierInvoiceReportViewModel : PageViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
+    private Dictionary<string, int> _buyingProductIdsByName = [];
 
     public override string Title => "فاتورة مورد";
 
     public ObservableCollection<NamedOption> Suppliers { get; } = [];
-    public ObservableCollection<NamedOption> BuyingProducts { get; } = [];
+    public ObservableCollection<string> BuyingProductNames { get; } = [];
     public ObservableCollection<PurchaseInvoiceEntryRowViewModel> Rows { get; } = [];
 
     [ObservableProperty]
@@ -25,6 +26,9 @@ public partial class SupplierInvoiceReportViewModel : PageViewModelBase
 
     [ObservableProperty]
     private string? _statusMessage;
+
+    public bool HasBuyingProducts => BuyingProductNames.Count > 0;
+    public bool ShowBuyingProductsHint => BuyingProductNames.Count == 0;
 
     public SupplierInvoiceReportViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
@@ -64,9 +68,13 @@ public partial class SupplierInvoiceReportViewModel : PageViewModelBase
             .OrderBy(p => p.Name)
             .ToListAsync();
 
-        BuyingProducts.Clear();
-        foreach (var p in products)
-            BuyingProducts.Add(new NamedOption { Id = p.Id, Name = p.Name });
+        _buyingProductIdsByName = products.ToDictionary(p => p.Name, p => p.Id);
+        BuyingProductNames.Clear();
+        foreach (var name in _buyingProductIdsByName.Keys.OrderBy(n => n))
+            BuyingProductNames.Add(name);
+
+        OnPropertyChanged(nameof(HasBuyingProducts));
+        OnPropertyChanged(nameof(ShowBuyingProductsHint));
     }
 
     private async Task LoadRowsAsync()
@@ -88,7 +96,7 @@ public partial class SupplierInvoiceReportViewModel : PageViewModelBase
             .ToListAsync();
 
         foreach (var invoice in invoices)
-            Rows.Add(ToRow(invoice, BuyingProducts.FirstOrDefault(p => p.Id == invoice.ProductId)));
+            Rows.Add(ToRow(invoice));
 
         EnsureTrailingEmptyRow();
     }
@@ -98,7 +106,12 @@ public partial class SupplierInvoiceReportViewModel : PageViewModelBase
         if (row.IsEmpty || SelectedSupplier is null || IsBusy)
             return;
 
+        if (!TryResolveProduct(row, out var productId))
+            return;
+
+        row.ProductId = productId;
         row.RecalculateTotals();
+
         if (row.Quantity <= 0)
         {
             StatusMessage = "الكمية يجب أن تكون أكبر من صفر.";
@@ -159,10 +172,31 @@ public partial class SupplierInvoiceReportViewModel : PageViewModelBase
         }
     }
 
-    public void ApplyProductSelection(PurchaseInvoiceEntryRowViewModel row, NamedOption? product)
+    public void ApplyProductSelection(PurchaseInvoiceEntryRowViewModel row, string? productName)
     {
-        row.SelectedProduct = product;
-        row.ProductId = product?.Id ?? 0;
+        if (string.IsNullOrWhiteSpace(productName))
+            return;
+
+        row.ProductName = productName.Trim();
+        if (TryResolveProduct(row, out var productId))
+            row.ProductId = productId;
+    }
+
+    private bool TryResolveProduct(PurchaseInvoiceEntryRowViewModel row, out int productId)
+    {
+        productId = 0;
+        if (string.IsNullOrWhiteSpace(row.ProductName))
+        {
+            StatusMessage = "اختر منتجاً قبل الحفظ.";
+            return false;
+        }
+
+        var name = row.ProductName.Trim();
+        if (_buyingProductIdsByName.TryGetValue(name, out productId))
+            return true;
+
+        StatusMessage = "المنتج غير موجود أو ليس من نوع «للشراء».";
+        return false;
     }
 
     [RelayCommand]
@@ -199,24 +233,37 @@ public partial class SupplierInvoiceReportViewModel : PageViewModelBase
     private void EnsureTrailingEmptyRow()
     {
         if (Rows.Count == 0 || !Rows[^1].IsEmpty)
-            Rows.Add(new PurchaseInvoiceEntryRowViewModel());
+        {
+            var row = new PurchaseInvoiceEntryRowViewModel();
+            row.AttachProductNames(BuyingProductNames);
+            Rows.Add(row);
+        }
     }
 
-    private static PurchaseInvoiceEntryRowViewModel ToRow(PurchaseInvoice invoice, NamedOption? product)
+    private PurchaseInvoiceEntryRowViewModel ToRow(PurchaseInvoice invoice)
     {
+        var name = invoice.Product.Name;
+        if (!_buyingProductIdsByName.ContainsKey(name))
+        {
+            _buyingProductIdsByName[name] = invoice.ProductId;
+            if (!BuyingProductNames.Contains(name))
+                BuyingProductNames.Add(name);
+        }
+
         var row = new PurchaseInvoiceEntryRowViewModel
         {
             Id = invoice.Id,
             Date = invoice.Date,
             Quantity = invoice.Quantity,
+            ProductName = name,
             ProductId = invoice.ProductId,
             UnitPrice = invoice.UnitPrice,
             TransportCost = invoice.TransportCost,
             Paid = invoice.Paid,
             Total = invoice.Total,
-            Remaining = invoice.Remaining,
-            SelectedProduct = product ?? new NamedOption { Id = invoice.ProductId, Name = invoice.Product.Name }
+            Remaining = invoice.Remaining
         };
+        row.AttachProductNames(BuyingProductNames);
         return row;
     }
 }

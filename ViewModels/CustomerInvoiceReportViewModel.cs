@@ -10,11 +10,12 @@ namespace Recyclage.ViewModels;
 public partial class CustomerInvoiceReportViewModel : PageViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
+    private Dictionary<string, int> _saleProductIdsByName = [];
 
     public override string Title => "فاتورة زبون";
 
     public ObservableCollection<NamedOption> Clients { get; } = [];
-    public ObservableCollection<NamedOption> SaleProducts { get; } = [];
+    public ObservableCollection<string> SaleProductNames { get; } = [];
     public ObservableCollection<SaleEntryRowViewModel> Rows { get; } = [];
 
     [ObservableProperty]
@@ -25,6 +26,9 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
 
     [ObservableProperty]
     private string? _statusMessage;
+
+    public bool HasSaleProducts => SaleProductNames.Count > 0;
+    public bool ShowSaleProductsHint => SaleProductNames.Count == 0;
 
     public CustomerInvoiceReportViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
@@ -64,9 +68,13 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
             .OrderBy(p => p.Name)
             .ToListAsync();
 
-        SaleProducts.Clear();
-        foreach (var p in products)
-            SaleProducts.Add(new NamedOption { Id = p.Id, Name = p.Name });
+        _saleProductIdsByName = products.ToDictionary(p => p.Name, p => p.Id);
+        SaleProductNames.Clear();
+        foreach (var name in _saleProductIdsByName.Keys.OrderBy(n => n))
+            SaleProductNames.Add(name);
+
+        OnPropertyChanged(nameof(HasSaleProducts));
+        OnPropertyChanged(nameof(ShowSaleProductsHint));
     }
 
     private async Task LoadRowsAsync()
@@ -88,7 +96,7 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
             .ToListAsync();
 
         foreach (var sale in sales)
-            Rows.Add(ToRow(sale, SaleProducts.FirstOrDefault(p => p.Id == sale.ProductId)));
+            Rows.Add(ToRow(sale));
 
         EnsureTrailingEmptyRow();
     }
@@ -98,7 +106,12 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
         if (row.IsEmpty || SelectedClient is null || IsBusy)
             return;
 
+        if (!TryResolveProduct(row, out var productId))
+            return;
+
+        row.ProductId = productId;
         row.RecalculateTotals();
+
         if (row.Quantity <= 0)
         {
             StatusMessage = "الكمية يجب أن تكون أكبر من صفر.";
@@ -159,10 +172,31 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
         }
     }
 
-    public void ApplyProductSelection(SaleEntryRowViewModel row, NamedOption? product)
+    public void ApplyProductSelection(SaleEntryRowViewModel row, string? productName)
     {
-        row.SelectedProduct = product;
-        row.ProductId = product?.Id ?? 0;
+        if (string.IsNullOrWhiteSpace(productName))
+            return;
+
+        row.ProductName = productName.Trim();
+        if (TryResolveProduct(row, out var productId))
+            row.ProductId = productId;
+    }
+
+    private bool TryResolveProduct(SaleEntryRowViewModel row, out int productId)
+    {
+        productId = 0;
+        if (string.IsNullOrWhiteSpace(row.ProductName))
+        {
+            StatusMessage = "اختر منتجاً قبل الحفظ.";
+            return false;
+        }
+
+        var name = row.ProductName.Trim();
+        if (_saleProductIdsByName.TryGetValue(name, out productId))
+            return true;
+
+        StatusMessage = "المنتج غير موجود أو ليس من نوع «للبيع».";
+        return false;
     }
 
     [RelayCommand]
@@ -199,24 +233,37 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
     private void EnsureTrailingEmptyRow()
     {
         if (Rows.Count == 0 || !Rows[^1].IsEmpty)
-            Rows.Add(new SaleEntryRowViewModel());
+        {
+            var row = new SaleEntryRowViewModel();
+            row.AttachProductNames(SaleProductNames);
+            Rows.Add(row);
+        }
     }
 
-    private static SaleEntryRowViewModel ToRow(Sale sale, NamedOption? product)
+    private SaleEntryRowViewModel ToRow(Sale sale)
     {
+        var name = sale.Product.Name;
+        if (!_saleProductIdsByName.ContainsKey(name))
+        {
+            _saleProductIdsByName[name] = sale.ProductId;
+            if (!SaleProductNames.Contains(name))
+                SaleProductNames.Add(name);
+        }
+
         var row = new SaleEntryRowViewModel
         {
             Id = sale.Id,
             Date = sale.Date,
             Quantity = sale.Quantity,
+            ProductName = name,
             ProductId = sale.ProductId,
             UnitPrice = sale.UnitPrice,
             TransportCost = sale.TransportCost,
             Paid = sale.Paid,
             Total = sale.Total,
-            Remaining = sale.Remaining,
-            SelectedProduct = product ?? new NamedOption { Id = sale.ProductId, Name = sale.Product.Name }
+            Remaining = sale.Remaining
         };
+        row.AttachProductNames(SaleProductNames);
         return row;
     }
 }

@@ -15,8 +15,13 @@ public partial class CustomerInvoiceReportView : UserControl
     private async void OnAutoSave(object? sender, RoutedEventArgs e) =>
         await SaveRowFromSenderAsync(sender);
 
-    private async void OnProductChanged(object? sender, SelectionChangedEventArgs e) =>
+    private async void OnProductChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (e.AddedItems.Count == 0)
+            return;
+
         await SaveRowFromSenderAsync(sender, applyProduct: true);
+    }
 
     private async Task SaveRowFromSenderAsync(object? sender, bool applyProduct = false)
     {
@@ -27,7 +32,7 @@ public partial class CustomerInvoiceReportView : UserControl
             return;
 
         if (applyProduct && sender is ComboBox combo)
-            vm.ApplyProductSelection(row, combo.SelectedItem as NamedOption);
+            vm.ApplyProductSelection(row, combo.SelectedItem as string);
 
         await vm.SaveRowAsync(row);
     }
