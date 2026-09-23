@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Recyclage.ViewModels"
+             xmlns:behaviors="using:Recyclage.Behaviors"
              x:Class="Recyclage.Views.SupplierInvoiceReportView"
              x:DataType="vm:SupplierInvoiceReportViewModel"
              FlowDirection="RightToLeft">
@@ -38,8 +39,7 @@
                   IsReadOnly="True"
                   CanUserReorderColumns="False"
                   GridLinesVisibility="All"
-                  BorderThickness="1"
-                  BorderBrush="#D1D5DB">
+                  BorderThickness="1">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="تاريخ" Width="120">
                     <DataGridTemplateColumn.CellTemplate>
@@ -57,7 +57,7 @@
                         <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
                             <Grid Margin="4,2">
                                 <TextBlock Text="{Binding Quantity}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
-                                <TextBox Text="{Binding Quantity, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                                <TextBox Classes="numeric-input" behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True" Text="{Binding Quantity, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -85,7 +85,7 @@
                         <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
                             <Grid Margin="4,2">
                                 <TextBlock Text="{Binding UnitPrice}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
-                                <TextBox Text="{Binding UnitPrice, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                                <TextBox Classes="numeric-input" behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True" Text="{Binding UnitPrice, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -96,7 +96,7 @@
                         <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
                             <Grid Margin="4,2">
                                 <TextBlock Text="{Binding TransportCost}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
-                                <TextBox Text="{Binding TransportCost, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                                <TextBox Classes="numeric-input" behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True" Text="{Binding TransportCost, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -115,7 +115,7 @@
                         <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
                             <Grid Margin="4,2">
                                 <TextBlock Text="{Binding Paid}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
-                                <TextBox Text="{Binding Paid, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                                <TextBox Classes="numeric-input" behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True" Text="{Binding Paid, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

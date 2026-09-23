@@ -17,8 +17,7 @@
                   IsReadOnly="True"
                   CanUserReorderColumns="False"
                   GridLinesVisibility="All"
-                  BorderThickness="1"
-                  BorderBrush="#D1D5DB">
+                  BorderThickness="1">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="الشهر" Binding="{Binding Month}" Width="140"/>
                 <DataGridTextColumn Header="دخول في شهر" Binding="{Binding Income}" Width="*"/>

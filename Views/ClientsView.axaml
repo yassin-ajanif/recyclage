@@ -27,8 +27,7 @@
                   IsReadOnly="True"
                   CanUserReorderColumns="False"
                   GridLinesVisibility="All"
-                  BorderThickness="1"
-                  BorderBrush="#D1D5DB">
+                  BorderThickness="1">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="الاسم" Width="*">
                     <DataGridTemplateColumn.CellTemplate>

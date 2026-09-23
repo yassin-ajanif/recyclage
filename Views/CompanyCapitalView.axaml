@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Recyclage.ViewModels"
+             xmlns:behaviors="using:Recyclage.Behaviors"
              x:Class="Recyclage.Views.CompanyCapitalView"
              x:DataType="vm:CompanyCapitalViewModel"
              FlowDirection="RightToLeft">
@@ -19,7 +20,7 @@
                     Padding="20">
                 <StackPanel Spacing="8">
                     <TextBlock Text="رأس المال (د.م)" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding CompanyCapital}"/>
+                    <TextBox Classes="numeric-input" behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True" Text="{Binding CompanyCapital}"/>
                 </StackPanel>
             </Border>
 
@@ -47,7 +48,7 @@
                         <StackPanel Spacing="4">
                             <TextBlock Text="الفترة بين النسخ" FontWeight="SemiBold"/>
                             <Grid ColumnDefinitions="*,120">
-                                <TextBox Grid.Column="0" Text="{Binding BackupIntervalHours}"/>
+                                <TextBox Classes="numeric-input" behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True" Grid.Column="0" Text="{Binding BackupIntervalHours}"/>
                                 <ComboBox Grid.Column="1"
                                           Margin="8,0,0,0"
                                           ItemsSource="{Binding BackupIntervalUnitOptions}"

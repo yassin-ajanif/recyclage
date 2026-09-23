@@ -1,6 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Recyclage"
+             xmlns:behaviors="using:Recyclage.Behaviors"
              x:Class="Recyclage.App"
              RequestedThemeVariant="Light">
 
@@ -8,9 +9,15 @@
         <Color x:Key="EditActionColor">#EA580C</Color>
         <Color x:Key="DeleteActionColor">#DC2626</Color>
         <Color x:Key="SaveActionColor">#16A34A</Color>
+        <Color x:Key="TableGridLineColor">#D4B87A</Color>
+        <Color x:Key="InputFieldColor">#B8955A</Color>
+        <Color x:Key="InputFieldBackgroundColor">#FBF6EC</Color>
         <SolidColorBrush x:Key="EditActionBrush" Color="{StaticResource EditActionColor}"/>
         <SolidColorBrush x:Key="DeleteActionBrush" Color="{StaticResource DeleteActionColor}"/>
         <SolidColorBrush x:Key="SaveActionBrush" Color="{StaticResource SaveActionColor}"/>
+        <SolidColorBrush x:Key="TableGridLineBrush" Color="{StaticResource TableGridLineColor}"/>
+        <SolidColorBrush x:Key="InputFieldBrush" Color="{StaticResource InputFieldColor}"/>
+        <SolidColorBrush x:Key="InputFieldBackgroundBrush" Color="{StaticResource InputFieldBackgroundColor}"/>
         <SolidColorBrush x:Key="ActionButtonTextBrush" Color="White"/>
     </Application.Resources>
 
@@ -24,6 +31,12 @@
 
         <Style Selector="DataGrid">
             <Setter Property="FlowDirection" Value="RightToLeft"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TableGridLineBrush}"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource TableGridLineBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource TableGridLineBrush}"/>
+        </Style>
+        <Style Selector="DataGridCell">
+            <Setter Property="BorderBrush" Value="{StaticResource TableGridLineBrush}"/>
         </Style>
         <Style Selector="DataGridCell TextBlock">
             <Setter Property="TextAlignment" Value="Right"/>
@@ -33,12 +46,46 @@
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TableGridLineBrush}"/>
         </Style>
         <Style Selector="DataGridColumnHeader TextBlock">
             <Setter Property="TextAlignment" Value="Right"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="{StaticResource InputFieldBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="TextBox:focus">
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="TextBox:pointerover">
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="TextBox.numeric-input">
+            <Setter Property="behaviors:TextBoxFocusBehavior.SelectAllOnFocus" Value="True"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="{StaticResource InputFieldBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="ComboBox:focus">
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="ComboBox:pointerover">
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="ComboBox:pointerover /template/ Border#Background">
+            <Setter Property="Background" Value="{StaticResource InputFieldBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="ComboBox:focus /template/ Border#Background">
+            <Setter Property="Background" Value="{StaticResource InputFieldBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
         </Style>
 
         <Style Selector="Button.edit-action">

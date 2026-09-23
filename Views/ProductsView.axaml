@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Recyclage.ViewModels"
+             xmlns:behaviors="using:Recyclage.Behaviors"
              x:Class="Recyclage.Views.ProductsView"
              x:DataType="vm:ProductsViewModel"
              FlowDirection="RightToLeft">
@@ -28,8 +29,7 @@
                   IsReadOnly="True"
                   CanUserReorderColumns="False"
                   GridLinesVisibility="All"
-                  BorderThickness="1"
-                  BorderBrush="#D1D5DB">
+                  BorderThickness="1">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="الاسم" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
@@ -71,7 +71,7 @@
                         <DataTemplate x:DataType="vm:ProductRowViewModel">
                             <Grid Margin="4,2">
                                 <TextBlock Text="{Binding DefaultUnitPrice}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
-                                <TextBox Text="{Binding DefaultUnitPrice, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                                <TextBox Classes="numeric-input" behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True" Text="{Binding DefaultUnitPrice, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
