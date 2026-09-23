@@ -50,15 +50,20 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
         <Style Selector="DataGridColumnHeader">
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="MinHeight" Value="52"/>
+            <Setter Property="Padding" Value="8,10"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="BorderBrush" Value="{StaticResource TableGridLineBrush}"/>
         </Style>
         <Style Selector="DataGridColumnHeader TextBlock">
             <Setter Property="TextAlignment" Value="Right"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
 

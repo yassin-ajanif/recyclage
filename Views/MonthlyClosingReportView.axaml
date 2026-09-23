@@ -29,13 +29,85 @@
                   IsReadOnly="True"
                   CanUserReorderColumns="False"
                   GridLinesVisibility="All"
-                  BorderThickness="1">
+                  BorderThickness="1"
+                  HorizontalScrollBarVisibility="Auto">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="الشهر" Binding="{Binding Month}" Width="140"/>
-                <DataGridTextColumn Header="دخول في شهر" Binding="{Binding Income}" Width="*"/>
-                <DataGridTextColumn Header="مصاريف في شهر" Binding="{Binding Expenses}" Width="*"/>
-                <DataGridTextColumn Header="مشتريات في شهر" Binding="{Binding Purchases}" Width="*"/>
-                <DataGridTextColumn Header="خروج في شهر" Binding="{Binding Outgoing}" Width="*"/>
+                <DataGridTemplateColumn MinWidth="100" Width="100">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="الشهر" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Month}" Margin="8,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn MinWidth="115" Width="115">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="دخول في شهر" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding MonthlyPurchases}" Margin="8,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn MinWidth="120" Width="120">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="المصاريف في شهر" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Expenses}" Margin="8,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn MinWidth="115" Width="115">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="المجموع (د+م)" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TotalIncomePurchases}" Margin="8,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn MinWidth="105" Width="105">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="خروج في شهر" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Outgoing}" Margin="8,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn MinWidth="150" Width="*">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="الباقي في شهر رأس مال" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding CapitalRemaining}" Margin="8,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn MinWidth="120" Width="120">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="(+ أو -) شركة" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding CompanyBalance}" Margin="8,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

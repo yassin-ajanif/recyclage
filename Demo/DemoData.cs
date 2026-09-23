@@ -141,9 +141,9 @@ public static class DemoData
         new()
         {
             Month = "نوفمبر 2026",
-            Income = "7 730,00 د.م",
+            MonthlyPurchases = "7 450,00 د.م",
             Expenses = "5 550,00 د.م",
-            Purchases = "7 450,00 د.م",
+            TotalIncomePurchases = "13 000,00 د.م",
             Outgoing = "3 500,00 د.م"
         }
     ];
