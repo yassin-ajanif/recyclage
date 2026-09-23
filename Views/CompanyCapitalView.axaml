@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Recyclage.ViewModels"
+             x:Class="Recyclage.Views.CompanyCapitalView"
+             x:DataType="vm:CompanyCapitalViewModel"
+             FlowDirection="RightToLeft">
+
+    <StackPanel Margin="24" Spacing="16" MaxWidth="420" HorizontalAlignment="Left">
+        <StackPanel Spacing="4">
+            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="قيمة ثابتة تُستخدم في حسابات الشركاء" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+        </StackPanel>
+
+        <Border Background="White"
+                BorderBrush="#D1D5DB"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="20">
+            <StackPanel Spacing="8">
+                <TextBlock Text="رأس المال (د.م)" FontWeight="SemiBold"/>
+                <TextBox Text="{Binding CompanyCapital}" IsReadOnly="True"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,51 @@
+## Build
+bin/
+obj/
+out/
+
+## IDE / editor
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+.idea/
+
+## OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+## .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.nupkg
+*.snupkg
+
+## Logs & diagnostics
+*.log
+*.tlog
+
+## Avalonia / Hot Reload
+*.HotReload.*
+
+## Secrets & local config
+.env
+.env.*
+appsettings.Development.json
+secrets.json
+*.pfx
+
+## Test / coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+## Misc
+*.tmp
+*.temp
+~$*

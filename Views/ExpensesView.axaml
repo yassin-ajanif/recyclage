@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Recyclage.ViewModels"
+             x:Class="Recyclage.Views.ExpensesView"
+             x:DataType="vm:ExpensesViewModel"
+             FlowDirection="RightToLeft">
+
+    <Grid RowDefinitions="Auto,*" Margin="24">
+        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="عرض كامل — محسوب من جدول المصاريف" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Rows}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserReorderColumns="False"
+                  GridLinesVisibility="All"
+                  BorderThickness="1"
+                  BorderBrush="#D1D5DB">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="تاريخ" Binding="{Binding Date}" Width="120"/>
+                <DataGridTextColumn Header="نوع المصاريف" Binding="{Binding ExpenseType}" Width="*"/>
+                <DataGridTextColumn Header="الواجب" Binding="{Binding Amount}" Width="140"/>
+                <DataGridTextColumn Header="ملاحظة" Binding="{Binding Description}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

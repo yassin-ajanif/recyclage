@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Recyclage.ViewModels"
+             x:Class="Recyclage.Views.MonthlyClosingReportView"
+             x:DataType="vm:MonthlyClosingReportViewModel"
+             FlowDirection="RightToLeft">
+
+    <Grid RowDefinitions="Auto,*" Margin="24">
+        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="محسوب من المبيعات والمشتريات والمصاريف والشركاء" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Rows}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserReorderColumns="False"
+                  GridLinesVisibility="All"
+                  BorderThickness="1"
+                  BorderBrush="#D1D5DB">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="الشهر" Binding="{Binding Month}" Width="140"/>
+                <DataGridTextColumn Header="دخول في شهر" Binding="{Binding Income}" Width="*"/>
+                <DataGridTextColumn Header="مصاريف في شهر" Binding="{Binding Expenses}" Width="*"/>
+                <DataGridTextColumn Header="مشتريات في شهر" Binding="{Binding Purchases}" Width="*"/>
+                <DataGridTextColumn Header="خروج في شهر" Binding="{Binding Outgoing}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

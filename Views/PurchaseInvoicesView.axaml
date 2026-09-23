@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Recyclage.ViewModels"
+             x:Class="Recyclage.Views.PurchaseInvoicesView"
+             x:DataType="vm:PurchaseInvoicesViewModel"
+             FlowDirection="RightToLeft">
+
+    <Grid RowDefinitions="Auto,*" Margin="24">
+        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="عرض كامل — محسوب من جدول المشتريات" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Rows}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserReorderColumns="False"
+                  GridLinesVisibility="All"
+                  BorderThickness="1"
+                  BorderBrush="#D1D5DB">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="تاريخ" Binding="{Binding Date}" Width="110"/>
+                <DataGridTextColumn Header="الكمية" Binding="{Binding Quantity}" Width="90"/>
+                <DataGridTextColumn Header="منتج" Binding="{Binding Product}" Width="*"/>
+                <DataGridTextColumn Header="مورد" Binding="{Binding Supplier}" Width="160" MinWidth="140"/>
+                <DataGridTextColumn Header="ثمن" Binding="{Binding UnitPrice}" Width="100"/>
+                <DataGridTextColumn Header="نقل" Binding="{Binding TransportCost}" Width="100"/>
+                <DataGridTextColumn Header="المجموع" Binding="{Binding Total}" Width="110"/>
+                <DataGridTextColumn Header="دفع" Binding="{Binding Paid}" Width="100"/>
+                <DataGridTextColumn Header="الباقي" Binding="{Binding Remaining}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

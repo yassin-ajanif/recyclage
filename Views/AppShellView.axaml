@@ -1,0 +1,151 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Recyclage.ViewModels"
+             x:Class="Recyclage.Views.AppShellView"
+             x:DataType="vm:AppShellViewModel">
+
+    <!-- Sidebar on the right; RTL text inside each panel -->
+    <Grid ColumnDefinitions="*,260" FlowDirection="LeftToRight">
+        <Border Grid.Column="0"
+                Background="#F9FAFB"
+                FlowDirection="RightToLeft">
+            <ContentControl Content="{Binding CurrentPage}"/>
+        </Border>
+
+        <Border Grid.Column="1"
+                Background="#14532D"
+                Padding="16,24"
+                FlowDirection="RightToLeft">
+            <Grid RowDefinitions="Auto,*">
+                <TextBlock Grid.Row="0"
+                           Text="إعادة التدوير"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Right"
+                           Margin="8,0,8,20"/>
+
+                <ScrollViewer Grid.Row="1">
+                    <StackPanel Spacing="4">
+
+                        <!-- العمليات -->
+                        <Button Command="{Binding ToggleInvoicesCommand}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="#BBF7D0"
+                                FontWeight="SemiBold"
+                                Padding="12,8">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="العمليات" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding InvoicesArrow}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <StackPanel Spacing="2" IsVisible="{Binding InvoicesExpanded}" Margin="0,0,0,8">
+                            <Button Content="فاتورة مورد"
+                                    Command="{Binding GoSupplierReportCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                            <Button Content="فاتورة زبون"
+                                    Command="{Binding GoCustomerReportCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                        </StackPanel>
+
+                        <!-- حساباتي -->
+                        <Button Command="{Binding ToggleAccountsCommand}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="#BBF7D0"
+                                FontWeight="SemiBold"
+                                Padding="12,8">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="حساباتي" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding AccountsArrow}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <StackPanel Spacing="2" IsVisible="{Binding AccountsExpanded}" Margin="0,0,0,8">
+                            <Button Content="فاتورة المشتريات"
+                                    Command="{Binding GoPurchaseInvoicesCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                            <Button Content="فاتورة المبيعات"
+                                    Command="{Binding GoSalesCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                            <Button Content="فاتورة المصاريف"
+                                    Command="{Binding GoExpensesCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                            <Button Content="حساب آخر شهر"
+                                    Command="{Binding GoMonthlyClosingCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                            <Button Content="حساب بين الشركاء"
+                                    Command="{Binding GoPartnerTransactionsCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                        </StackPanel>
+
+                        <!-- الإعدادات -->
+                        <Button Command="{Binding ToggleSettingsCommand}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="#BBF7D0"
+                                FontWeight="SemiBold"
+                                Padding="12,8">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="الإعدادات" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding SettingsArrow}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <StackPanel Spacing="2" IsVisible="{Binding SettingsExpanded}">
+                            <Button Content="المنتجات"
+                                    Command="{Binding GoProductsCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                            <Button Content="رأس المال"
+                                    Command="{Binding GoCompanyCapitalCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+
+    <UserControl.Styles>
+        <Style Selector="Button.nav-item">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#E5E7EB"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="8,2"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.nav-item:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#166534"/>
+        </Style>
+    </UserControl.Styles>
+</UserControl>
