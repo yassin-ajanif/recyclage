@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
@@ -30,14 +31,24 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
     [ObservableProperty]
     private string? _statusMessage;
 
+    [ObservableProperty]
+    private decimal _totalPaid;
+
+    [ObservableProperty]
+    private decimal _totalRemaining;
+
     public bool HasBuyingProducts => BuyingProductNames.Count > 0;
     public bool ShowBuyingProductsHint => BuyingProductNames.Count == 0;
 
     public SupplierInvoiceReportViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
         _dbFactory = dbFactory;
+        Rows.CollectionChanged += OnRowsCollectionChanged;
         _ = InitializeAsync();
     }
+
+    private void OnRowsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+        RecalculateFooterTotals();
 
     private async Task InitializeAsync()
     {
@@ -102,6 +113,7 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
             Rows.Add(ToRow(invoice));
 
         EnsureTrailingEmptyRow();
+        RecalculateFooterTotals();
     }
 
     public override async Task<bool> SaveRowAsync(PurchaseInvoiceEntryRowViewModel row)
@@ -166,6 +178,7 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
                 row.EndEdit();
             }
 
+            RecalculateFooterTotals();
             return true;
         }
         catch (Exception ex)
@@ -230,6 +243,7 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
 
             Rows.Remove(row);
             EnsureTrailingEmptyRow();
+            RecalculateFooterTotals();
         }
         catch (Exception ex)
         {
@@ -239,6 +253,13 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
         {
             IsBusy = false;
         }
+    }
+
+    private void RecalculateFooterTotals()
+    {
+        var savedRows = Rows.Where(r => r.Id > 0);
+        TotalPaid = savedRows.Sum(r => r.Paid);
+        TotalRemaining = savedRows.Sum(r => r.Remaining);
     }
 
     private void EnsureTrailingEmptyRow()

@@ -11,13 +11,14 @@
             <TextBlock Text="عرض كامل — محسوب من جدول المشتريات" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding Rows}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  CanUserReorderColumns="False"
-                  GridLinesVisibility="All"
-                  BorderThickness="1">
+        <Grid Grid.Row="1" RowDefinitions="*,Auto">
+            <DataGrid Grid.Row="0"
+                      ItemsSource="{Binding Rows}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserReorderColumns="False"
+                      GridLinesVisibility="All"
+                      BorderThickness="1,1,1,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="تاريخ" Binding="{Binding Date}" Width="110"/>
                 <DataGridTextColumn Header="الكمية" Binding="{Binding Quantity}" Width="90"/>
@@ -29,6 +30,33 @@
                 <DataGridTextColumn Header="دفع" Binding="{Binding Paid}" Width="100"/>
                 <DataGridTextColumn Header="الباقي" Binding="{Binding Remaining}" Width="100"/>
             </DataGrid.Columns>
-        </DataGrid>
+            </DataGrid>
+
+            <Border Grid.Row="1"
+                    Background="#FAF8F5"
+                    BorderBrush="{StaticResource TableGridLineBrush}"
+                    BorderThickness="1,0,1,1"
+                    Padding="0,8">
+                <Grid ColumnDefinitions="110,90,*,160,100,100,110,100,100">
+                    <TextBlock Grid.Column="0"
+                               Grid.ColumnSpan="7"
+                               Text="المجموع"
+                               FontWeight="SemiBold"
+                               Margin="8,0"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="7"
+                               Text="{Binding TotalPaid, StringFormat={}{0:0.00}}"
+                               Margin="8,0"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Grid.Column="8"
+                               Text="{Binding TotalRemaining, StringFormat={}{0:0.00}}"
+                               Margin="8,0"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"/>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

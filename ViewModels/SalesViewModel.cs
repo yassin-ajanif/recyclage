@@ -17,6 +17,12 @@ public partial class SalesViewModel : PageViewModelBase
     [ObservableProperty]
     private string? _statusMessage;
 
+    [ObservableProperty]
+    private decimal _totalPaid;
+
+    [ObservableProperty]
+    private decimal _totalRemaining;
+
     public SalesViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
         _dbFactory = dbFactory;
@@ -52,6 +58,9 @@ public partial class SalesViewModel : PageViewModelBase
                     Remaining = sale.Remaining.ToString("N2")
                 });
             }
+
+            TotalPaid = sales.Sum(s => s.Paid);
+            TotalRemaining = sales.Sum(s => s.Remaining);
         }
         catch (Exception ex)
         {

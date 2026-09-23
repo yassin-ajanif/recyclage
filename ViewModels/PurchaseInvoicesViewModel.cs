@@ -17,6 +17,12 @@ public partial class PurchaseInvoicesViewModel : PageViewModelBase
     [ObservableProperty]
     private string? _statusMessage;
 
+    [ObservableProperty]
+    private decimal _totalPaid;
+
+    [ObservableProperty]
+    private decimal _totalRemaining;
+
     public PurchaseInvoicesViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
         _dbFactory = dbFactory;
@@ -52,6 +58,9 @@ public partial class PurchaseInvoicesViewModel : PageViewModelBase
                     Remaining = invoice.Remaining.ToString("N2")
                 });
             }
+
+            TotalPaid = invoices.Sum(i => i.Paid);
+            TotalRemaining = invoices.Sum(i => i.Remaining);
         }
         catch (Exception ex)
         {

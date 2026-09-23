@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
@@ -24,11 +25,18 @@ public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryR
     [ObservableProperty]
     private string? _statusMessage;
 
+    [ObservableProperty]
+    private decimal _totalAmount;
+
     public ExpensesViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
         _dbFactory = dbFactory;
+        Rows.CollectionChanged += OnRowsCollectionChanged;
         _ = LoadAsync();
     }
+
+    private void OnRowsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+        RecalculateFooterTotals();
 
     [RelayCommand]
     private async Task LoadAsync()
@@ -49,6 +57,7 @@ public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryR
                 Rows.Add(ToRow(expense));
 
             EnsureTrailingEmptyRow();
+            RecalculateFooterTotals();
         }
         catch (Exception ex)
         {
@@ -106,6 +115,7 @@ public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryR
                 row.EndEdit();
             }
 
+            RecalculateFooterTotals();
             return true;
         }
         catch (Exception ex)
@@ -142,6 +152,7 @@ public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryR
 
             Rows.Remove(row);
             EnsureTrailingEmptyRow();
+            RecalculateFooterTotals();
         }
         catch (Exception ex)
         {
@@ -151,6 +162,11 @@ public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryR
         {
             IsBusy = false;
         }
+    }
+
+    private void RecalculateFooterTotals()
+    {
+        TotalAmount = Rows.Where(r => r.Id > 0).Sum(r => r.Amount);
     }
 
     private void EnsureTrailingEmptyRow()
