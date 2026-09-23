@@ -6,7 +6,7 @@ using Recyclage.Shared.Database;
 
 namespace Recyclage.ViewModels;
 
-public partial class SalesViewModel : PageViewModelBase
+public partial class SalesViewModel : MonthFilteredPageViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
@@ -32,6 +32,8 @@ public partial class SalesViewModel : PageViewModelBase
         _ = LoadAsync();
     }
 
+    protected override void OnMonthFilterChanged() => _ = LoadAsync();
+
     private async Task LoadAsync()
     {
         try
@@ -41,6 +43,7 @@ public partial class SalesViewModel : PageViewModelBase
                 .AsNoTracking()
                 .Include(s => s.Product)
                 .Include(s => s.Client)
+                .Where(s => s.Date.StartsWith(SelectedMonthPrefix))
                 .OrderByDescending(s => s.Date)
                 .ThenByDescending(s => s.Id)
                 .ToListAsync();

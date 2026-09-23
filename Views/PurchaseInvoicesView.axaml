@@ -1,15 +1,21 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Recyclage.ViewModels"
+             xmlns:views="using:Recyclage.Views"
              x:Class="Recyclage.Views.PurchaseInvoicesView"
              x:DataType="vm:PurchaseInvoicesViewModel"
              FlowDirection="RightToLeft">
 
     <Grid RowDefinitions="Auto,*" Margin="24">
-        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
-            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="عرض كامل — محسوب من جدول المشتريات" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-        </StackPanel>
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,16">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,16,0">
+                <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+                <TextBlock Text="عرض كامل — محسوب من جدول المشتريات" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            </StackPanel>
+            <views:MonthFilterBar Grid.Column="1"
+                                  VerticalAlignment="Center"
+                                  SelectMonthCommand="{Binding SelectMonthCommand}"/>
+        </Grid>
 
         <Grid Grid.Row="1" RowDefinitions="*,Auto">
             <DataGrid Grid.Row="0"
