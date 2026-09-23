@@ -121,7 +121,7 @@
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     Classes="nav-item"/>
-                            <Button Content="رأس المال"
+                            <Button Content="الإعدادات"
                                     Command="{Binding GoCompanyCapitalCommand}"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"

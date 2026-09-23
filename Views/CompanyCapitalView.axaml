@@ -5,21 +5,103 @@
              x:DataType="vm:CompanyCapitalViewModel"
              FlowDirection="RightToLeft">
 
-    <StackPanel Margin="24" Spacing="16" MaxWidth="420" HorizontalAlignment="Left">
-        <StackPanel Spacing="4">
-            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="قيمة ثابتة تُستخدم في حسابات الشركاء" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-        </StackPanel>
-
-        <Border Background="White"
-                BorderBrush="#D1D5DB"
-                BorderThickness="1"
-                CornerRadius="8"
-                Padding="20">
-            <StackPanel Spacing="8">
-                <TextBlock Text="رأس المال (د.م)" FontWeight="SemiBold"/>
-                <TextBox Text="{Binding CompanyCapital}" IsReadOnly="True"/>
+    <ScrollViewer Margin="24">
+        <StackPanel Spacing="16" MaxWidth="480" HorizontalAlignment="Left">
+            <StackPanel Spacing="4">
+                <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+                <TextBlock Text="رأس المال والنسخ الاحتياطي" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
             </StackPanel>
-        </Border>
-    </StackPanel>
+
+            <Border Background="White"
+                    BorderBrush="#D1D5DB"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="رأس المال (د.م)" FontWeight="SemiBold"/>
+                    <TextBox Text="{Binding CompanyCapital}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White"
+                    BorderBrush="#D1D5DB"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <StackPanel Spacing="12">
+                    <Button Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            Command="{Binding ToggleBackupCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="{Binding BackupArrow}" VerticalAlignment="Center"/>
+                            <TextBlock Text="النسخ الاحتياطي" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <StackPanel Spacing="12" IsVisible="{Binding BackupExpanded}">
+                        <CheckBox Content="تفعيل النسخ الاحتياطي التلقائي" IsChecked="{Binding BackupEnabled}"/>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="الفترة بين النسخ" FontWeight="SemiBold"/>
+                            <Grid ColumnDefinitions="*,120">
+                                <TextBox Grid.Column="0" Text="{Binding BackupIntervalHours}"/>
+                                <ComboBox Grid.Column="1"
+                                          Margin="8,0,0,0"
+                                          ItemsSource="{Binding BackupIntervalUnitOptions}"
+                                          SelectedItem="{Binding BackupIntervalUnit}"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="مدة الاحتفاظ (أيام)" FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding BackupRetentionDays}"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="مجلد النسخ" FontWeight="SemiBold"/>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding BackupDirectory}"
+                                         IsReadOnly="True"
+                                         VerticalContentAlignment="Center"/>
+                                <Button x:Name="PickBackupDirButton"
+                                        Grid.Column="1"
+                                        Margin="8,0,0,0"
+                                        Content="اختيار"
+                                        VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Opacity="0.7" FontSize="12">
+                                <Run Text="آخر نسخة:"/>
+                                <Run Text="{Binding LastBackupDateStr}"/>
+                            </TextBlock>
+                            <TextBlock Opacity="0.7" FontSize="12">
+                                <Run Text="عدد النسخ:"/>
+                                <Run Text="{Binding BackupCount}"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Button Content="نسخ الآن"
+                                Command="{Binding CreateBackupNowCommand}"
+                                HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Spacing="8">
+                <Button Content="حفظ"
+                        Command="{Binding SaveCommand}"
+                        HorizontalAlignment="Left"
+                        MinWidth="120"/>
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="#B45309"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

@@ -70,7 +70,7 @@ public partial class AppShellViewModel : ObservableObject
     private void GoProducts() => Navigate("products", () => _services.GetRequiredService<ProductsViewModel>());
 
     [RelayCommand]
-    private void GoCompanyCapital() => Navigate("capital", () => new CompanyCapitalViewModel());
+    private void GoCompanyCapital() => Navigate("capital", () => _services.GetRequiredService<CompanyCapitalViewModel>());
 
     private void Navigate(string key, Func<PageViewModelBase> factory)
     {

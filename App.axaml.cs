@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Recyclage.Infrastructure;
 using Recyclage.Shared.Database;
+using Recyclage.Shared.Services;
 using Recyclage.ViewModels;
 
 namespace Recyclage;
@@ -27,7 +28,12 @@ public partial class App : Application
             Services = services.BuildServiceProvider();
 
             using (var db = Services.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext())
+            {
                 db.Database.Migrate();
+                DbSeeder.Seed(db);
+            }
+
+            Services.GetRequiredService<IPeriodicBackupService>().Start();
 
             desktop.MainWindow = new MainWindow
             {

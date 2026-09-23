@@ -8,9 +8,17 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<AppSettingsRow> AppSettings => Set<AppSettingsRow>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AppSettingsRow>(e =>
+        {
+            e.Property(s => s.CompanyCapital).HasPrecision(18, 2);
+            e.Property(s => s.BackupIntervalUnit).IsRequired().HasMaxLength(16);
+            e.Property(s => s.BackupDirectory).IsRequired();
+        });
+
         modelBuilder.Entity<Product>(e =>
         {
             e.Property(p => p.Name).IsRequired().HasMaxLength(200);

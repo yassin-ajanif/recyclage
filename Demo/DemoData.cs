@@ -147,6 +147,4 @@ public static class DemoData
             Outgoing = "3 500,00 د.م"
         }
     ];
-
-    public const string CompanyCapital = "50 000,00 د.م";
 }
