@@ -18,6 +18,9 @@ public partial class SalesViewModel : PageViewModelBase
     private string? _statusMessage;
 
     [ObservableProperty]
+    private decimal _grandTotal;
+
+    [ObservableProperty]
     private decimal _totalPaid;
 
     [ObservableProperty]
@@ -59,6 +62,7 @@ public partial class SalesViewModel : PageViewModelBase
                 });
             }
 
+            GrandTotal = sales.Sum(s => s.Total);
             TotalPaid = sales.Sum(s => s.Paid);
             TotalRemaining = sales.Sum(s => s.Remaining);
         }

@@ -38,23 +38,18 @@
                     BorderThickness="1,0,1,1"
                     Padding="0,8">
                 <Grid ColumnDefinitions="110,90,*,*,100,100,110,100,100">
-                    <TextBlock Grid.Column="0"
-                               Grid.ColumnSpan="7"
-                               Text="المجموع"
-                               FontWeight="SemiBold"
-                               Margin="8,0"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Right"/>
-                    <TextBlock Grid.Column="7"
-                               Text="{Binding TotalPaid, StringFormat={}{0:0.00}}"
-                               Margin="8,0"
-                               VerticalAlignment="Center"
-                               FontWeight="SemiBold"/>
-                    <TextBlock Grid.Column="8"
-                               Text="{Binding TotalRemaining, StringFormat={}{0:0.00}}"
-                               Margin="8,0"
-                               VerticalAlignment="Center"
-                               FontWeight="SemiBold"/>
+                    <StackPanel Grid.Column="6" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="المجموع" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding GrandTotal, StringFormat={}{0:0.00} د.م}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="7" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="دفع" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalPaid, StringFormat={}{0:0.00} د.م}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="8" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="الباقي" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalRemaining, StringFormat={}{0:0.00} د.م}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>

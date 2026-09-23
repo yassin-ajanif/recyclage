@@ -18,6 +18,9 @@ public partial class PurchaseInvoicesViewModel : PageViewModelBase
     private string? _statusMessage;
 
     [ObservableProperty]
+    private decimal _grandTotal;
+
+    [ObservableProperty]
     private decimal _totalPaid;
 
     [ObservableProperty]
@@ -59,6 +62,7 @@ public partial class PurchaseInvoicesViewModel : PageViewModelBase
                 });
             }
 
+            GrandTotal = invoices.Sum(i => i.Total);
             TotalPaid = invoices.Sum(i => i.Paid);
             TotalRemaining = invoices.Sum(i => i.Remaining);
         }

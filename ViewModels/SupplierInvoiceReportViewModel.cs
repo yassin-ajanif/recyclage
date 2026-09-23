@@ -32,6 +32,9 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
     private string? _statusMessage;
 
     [ObservableProperty]
+    private decimal _grandTotal;
+
+    [ObservableProperty]
     private decimal _totalPaid;
 
     [ObservableProperty]
@@ -258,6 +261,7 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
     private void RecalculateFooterTotals()
     {
         var savedRows = Rows.Where(r => r.Id > 0);
+        GrandTotal = savedRows.Sum(r => r.Total);
         TotalPaid = savedRows.Sum(r => r.Paid);
         TotalRemaining = savedRows.Sum(r => r.Remaining);
     }
