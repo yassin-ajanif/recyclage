@@ -148,15 +148,5 @@ public static class DemoData
         }
     ];
 
-    public static IReadOnlyList<ProductRow> Products { get; } =
-    [
-        new() { Name = "بلاستيك خام", ProductType = "للشراء", DefaultUnit = "كغ", DefaultUnitPrice = "4,00 د.م", IsActive = "نعم" },
-        new() { Name = "بلاستيك معاد تدويره", ProductType = "للبيع", DefaultUnit = "كغ", DefaultUnitPrice = "6,00 د.م", IsActive = "نعم" },
-        new() { Name = "حديد خردة", ProductType = "للشراء", DefaultUnit = "كغ", DefaultUnitPrice = "3,50 د.م", IsActive = "نعم" },
-        new() { Name = "حديد معاد تدويره", ProductType = "للبيع", DefaultUnit = "كغ", DefaultUnitPrice = "5,50 د.م", IsActive = "نعم" },
-        new() { Name = "ورق", ProductType = "للشراء", DefaultUnit = "كغ", DefaultUnitPrice = "2,00 د.م", IsActive = "نعم" },
-        new() { Name = "ورق معاد تدويره", ProductType = "للبيع", DefaultUnit = "كغ", DefaultUnitPrice = "3,50 د.م", IsActive = "نعم" }
-    ];
-
     public const string CompanyCapital = "50 000,00 د.م";
 }

@@ -5,13 +5,24 @@
              x:DataType="vm:ProductsViewModel"
              FlowDirection="RightToLeft">
 
-    <Grid RowDefinitions="Auto,*" Margin="24">
+    <Grid RowDefinitions="Auto,Auto,*" Margin="24">
         <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
             <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="منتجات للشراء / للبيع" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="اكتب في الجدول — الحفظ تلقائي عند الخروج من الحقل"
+                       Opacity="0.6"
+                       FontSize="13"
+                       HorizontalAlignment="Stretch"
+                       TextAlignment="Right"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="1"
+        <TextBlock Grid.Row="1"
+                   Text="{Binding StatusMessage}"
+                   Foreground="#B45309"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"/>
+
+        <DataGrid Grid.Row="2"
+                  x:Name="ProductsGrid"
                   ItemsSource="{Binding Rows}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
@@ -20,11 +31,69 @@
                   BorderThickness="1"
                   BorderBrush="#D1D5DB">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="الاسم" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="نوع المنتج" Binding="{Binding ProductType}" Width="120"/>
-                <DataGridTextColumn Header="الوحدة" Binding="{Binding DefaultUnit}" Width="90"/>
-                <DataGridTextColumn Header="ثمن افتراضي" Binding="{Binding DefaultUnitPrice}" Width="120"/>
-                <DataGridTextColumn Header="نشط" Binding="{Binding IsActive}" Width="80"/>
+                <DataGridTemplateColumn Header="الاسم" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ProductRowViewModel">
+                            <TextBox Text="{Binding Name, Mode=TwoWay}"
+                                     Margin="4,2"
+                                     LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="نوع المنتج" Width="130">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ProductRowViewModel">
+                            <ComboBox ItemsSource="{x:Static vm:ProductsViewModel.ProductTypeLabels}"
+                                      SelectedItem="{Binding ProductType, Mode=TwoWay}"
+                                      Margin="4,2"
+                                      SelectionChanged="OnComboBoxSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="الوحدة" Width="90">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ProductRowViewModel">
+                            <TextBox Text="{Binding DefaultUnit, Mode=TwoWay}"
+                                     Margin="4,2"
+                                     LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="ثمن افتراضي" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ProductRowViewModel">
+                            <TextBox Text="{Binding DefaultUnitPrice, Mode=TwoWay}"
+                                     Margin="4,2"
+                                     LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="نشط" Width="70">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ProductRowViewModel">
+                            <CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}"
+                                      HorizontalAlignment="Center"
+                                      LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="حذف" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ProductRowViewModel">
+                            <Button Content="حذف"
+                                    Command="{Binding $parent[DataGrid].((vm:ProductsViewModel)DataContext).DeleteRowCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding CanDelete}"
+                                    HorizontalAlignment="Center"
+                                    Padding="8,4"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

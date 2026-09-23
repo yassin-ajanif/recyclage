@@ -1,10 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Recyclage.ViewModels;
 
 public partial class AppShellViewModel : ObservableObject
 {
+    private readonly IServiceProvider _services;
     [ObservableProperty]
     private PageViewModelBase? _currentPage;
 
@@ -24,8 +26,9 @@ public partial class AppShellViewModel : ObservableObject
     public string AccountsArrow => AccountsExpanded ? "▼" : "◀";
     public string SettingsArrow => SettingsExpanded ? "▼" : "◀";
 
-    public AppShellViewModel()
+    public AppShellViewModel(IServiceProvider services)
     {
+        _services = services;
         GoPurchaseInvoices();
     }
 
@@ -64,7 +67,7 @@ public partial class AppShellViewModel : ObservableObject
     private void GoPartnerTransactions() => Navigate("partners", () => new PartnerTransactionsViewModel());
 
     [RelayCommand]
-    private void GoProducts() => Navigate("products", () => new ProductsViewModel());
+    private void GoProducts() => Navigate("products", () => _services.GetRequiredService<ProductsViewModel>());
 
     [RelayCommand]
     private void GoCompanyCapital() => Navigate("capital", () => new CompanyCapitalViewModel());
