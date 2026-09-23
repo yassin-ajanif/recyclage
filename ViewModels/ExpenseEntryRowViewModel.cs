@@ -2,15 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Recyclage.ViewModels;
 
-public partial class ExpenseEntryRowViewModel : EditableRowViewModelBase
+public partial class ExpenseEntryRowViewModel : DatedEditableRowViewModelBase
 {
-    private string _snapshotDate = string.Empty;
     private string _snapshotExpenseType = string.Empty;
     private decimal _snapshotAmount;
     private string _snapshotDescription = string.Empty;
-
-    [ObservableProperty]
-    private string _date = DateTime.Today.ToString("yyyy-MM-dd");
 
     [ObservableProperty]
     private string _expenseType = string.Empty;
@@ -25,7 +21,7 @@ public partial class ExpenseEntryRowViewModel : EditableRowViewModelBase
 
     protected override void CaptureSnapshot()
     {
-        _snapshotDate = Date;
+        CaptureDateSnapshot();
         _snapshotExpenseType = ExpenseType;
         _snapshotAmount = Amount;
         _snapshotDescription = Description;
@@ -33,7 +29,7 @@ public partial class ExpenseEntryRowViewModel : EditableRowViewModelBase
 
     protected override void RestoreSnapshot()
     {
-        Date = _snapshotDate;
+        RestoreDateSnapshot();
         ExpenseType = _snapshotExpenseType;
         Amount = _snapshotAmount;
         Description = _snapshotDescription;
@@ -41,7 +37,7 @@ public partial class ExpenseEntryRowViewModel : EditableRowViewModelBase
 
     protected override void ClearFields()
     {
-        Date = DateTime.Today.ToString("yyyy-MM-dd");
+        ClearDateField();
         ExpenseType = string.Empty;
         Amount = 0;
         Description = string.Empty;

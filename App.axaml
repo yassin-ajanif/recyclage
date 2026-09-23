@@ -95,6 +95,17 @@
             <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
         </Style>
 
+        <Style Selector="CalendarDatePicker">
+            <Setter Property="Background" Value="{StaticResource InputFieldBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="CalendarDatePicker:focus">
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+        <Style Selector="CalendarDatePicker:pointerover">
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+        </Style>
+
         <Style Selector="Button.edit-action">
             <Setter Property="Background" Value="{StaticResource EditActionBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource EditActionBrush}"/>

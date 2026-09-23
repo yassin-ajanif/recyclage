@@ -3,18 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Recyclage.ViewModels;
 
-public partial class SaleEntryRowViewModel : EditableRowViewModelBase
+public partial class SaleEntryRowViewModel : DatedEditableRowViewModelBase
 {
-    private string _snapshotDate = string.Empty;
     private string _snapshotProductName = string.Empty;
     private decimal _snapshotQuantity;
     private int _snapshotProductId;
     private decimal _snapshotUnitPrice;
     private decimal _snapshotTransportCost;
     private decimal _snapshotPaid;
-
-    [ObservableProperty]
-    private string _date = DateTime.Today.ToString("yyyy-MM-dd");
 
     [ObservableProperty]
     private string _productName = string.Empty;
@@ -59,7 +55,7 @@ public partial class SaleEntryRowViewModel : EditableRowViewModelBase
 
     protected override void CaptureSnapshot()
     {
-        _snapshotDate = Date;
+        CaptureDateSnapshot();
         _snapshotProductName = ProductName;
         _snapshotQuantity = Quantity;
         _snapshotProductId = ProductId;
@@ -70,7 +66,7 @@ public partial class SaleEntryRowViewModel : EditableRowViewModelBase
 
     protected override void RestoreSnapshot()
     {
-        Date = _snapshotDate;
+        RestoreDateSnapshot();
         ProductName = _snapshotProductName;
         Quantity = _snapshotQuantity;
         ProductId = _snapshotProductId;
@@ -82,7 +78,7 @@ public partial class SaleEntryRowViewModel : EditableRowViewModelBase
 
     protected override void ClearFields()
     {
-        Date = DateTime.Today.ToString("yyyy-MM-dd");
+        ClearDateField();
         ProductName = string.Empty;
         Quantity = 0;
         ProductId = 0;

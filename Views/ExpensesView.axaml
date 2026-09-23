@@ -30,12 +30,19 @@
                   GridLinesVisibility="All"
                   BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="تاريخ" Width="120">
+                <DataGridTemplateColumn Header="تاريخ" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:ExpenseEntryRowViewModel">
                             <Grid Margin="4,2">
                                 <TextBlock Text="{Binding Date}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
-                                <TextBox Text="{Binding Date, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                                <CalendarDatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                                    DisplayDate="{Binding DisplayDate}"
+                                                    SelectedDateFormat="Custom"
+                                                    CustomDateFormatString="yyyy-MM-dd"
+                                                    IsTodayHighlighted="True"
+                                                    IsVisible="{Binding IsEditing}"
+                                                    HorizontalAlignment="Stretch"
+                                                    MinWidth="130"/>
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
