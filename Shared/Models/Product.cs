@@ -6,5 +6,4 @@ public class Product : BaseEntity
     public ProductType ProductType { get; set; }
     public string DefaultUnit { get; set; } = "كغ";
     public decimal DefaultUnitPrice { get; set; }
-    public bool IsActive { get; set; } = true;
 }

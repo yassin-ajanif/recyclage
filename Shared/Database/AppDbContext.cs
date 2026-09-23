@@ -23,7 +23,6 @@ public class AppDbContext : DbContext
                 "ProductType IN ('ForBuying', 'ForSale')"));
             e.Property(p => p.DefaultUnit).IsRequired().HasMaxLength(32);
             e.Property(p => p.DefaultUnitPrice).HasPrecision(18, 2);
-            e.Property(p => p.IsActive).HasDefaultValue(true);
             e.HasIndex(p => new { p.Name, p.ProductType });
         });
     }

@@ -18,9 +18,6 @@ public partial class ProductRowViewModel : ObservableObject
     [ObservableProperty]
     private decimal _defaultUnitPrice;
 
-    [ObservableProperty]
-    private bool _isActive = true;
-
     public bool IsEmpty => string.IsNullOrWhiteSpace(Name);
     public bool CanDelete => Id > 0;
 

@@ -72,16 +72,6 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="نشط" Width="70">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate x:DataType="vm:ProductRowViewModel">
-                            <CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}"
-                                      HorizontalAlignment="Center"
-                                      LostFocus="OnAutoSave"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
                 <DataGridTemplateColumn Header="حذف" Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:ProductRowViewModel">

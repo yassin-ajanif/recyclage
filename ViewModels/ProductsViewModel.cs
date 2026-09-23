@@ -93,8 +93,7 @@ public partial class ProductsViewModel : PageViewModelBase
                     Name = row.Name.Trim(),
                     ProductType = productType.Value,
                     DefaultUnit = string.IsNullOrWhiteSpace(row.DefaultUnit) ? "كغ" : row.DefaultUnit.Trim(),
-                    DefaultUnitPrice = row.DefaultUnitPrice,
-                    IsActive = row.IsActive
+                    DefaultUnitPrice = row.DefaultUnitPrice
                 };
 
                 db.Products.Add(entity);
@@ -112,7 +111,6 @@ public partial class ProductsViewModel : PageViewModelBase
                 entity.ProductType = productType.Value;
                 entity.DefaultUnit = string.IsNullOrWhiteSpace(row.DefaultUnit) ? "كغ" : row.DefaultUnit.Trim();
                 entity.DefaultUnitPrice = row.DefaultUnitPrice;
-                entity.IsActive = row.IsActive;
                 await db.SaveChangesAsync();
             }
         }
@@ -169,8 +167,7 @@ public partial class ProductsViewModel : PageViewModelBase
         Name = product.Name,
         ProductType = ProductTypeDisplay.ToArabic(product.ProductType),
         DefaultUnit = product.DefaultUnit,
-        DefaultUnitPrice = product.DefaultUnitPrice,
-        IsActive = product.IsActive
+        DefaultUnitPrice = product.DefaultUnitPrice
     };
 
     private static ProductType? ParseProductType(string label) => label.Trim() switch
