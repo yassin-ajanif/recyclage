@@ -13,13 +13,32 @@ public abstract partial class EditableGridViewModelBase<TRow> : PageViewModelBas
     {
         EditableRowCommands.CancelOtherEdits(EditableRows, row);
         row.BeginEdit();
+        EnsureTrailingRowEditable();
     }
 
     [RelayCommand]
-    public async Task CommitRow(TRow row) => await SaveRowAsync(row);
+    public async Task CommitRow(TRow row)
+    {
+        if (await SaveRowAsync(row))
+            EnsureTrailingRowEditable();
+    }
 
     [RelayCommand]
-    public void CancelEditRow(TRow row) => row.CancelEdit();
+    public void CancelEditRow(TRow row)
+    {
+        row.CancelEdit();
+        EnsureTrailingRowEditable();
+    }
+
+    protected void EnsureTrailingRowEditable()
+    {
+        if (EditableRows.Count == 0)
+            return;
+
+        var last = EditableRows[^1];
+        if (last.IsNewRow && !last.IsEditing)
+            last.StartAsNewRow();
+    }
 
     public abstract Task<bool> SaveRowAsync(TRow row);
 }

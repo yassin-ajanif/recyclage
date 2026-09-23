@@ -173,6 +173,10 @@ public partial class ProductsViewModel : EditableGridViewModelBase<ProductRowVie
             row.StartAsNewRow();
             Rows.Add(row);
         }
+        else if (!Rows[^1].IsEditing)
+        {
+            Rows[^1].StartAsNewRow();
+        }
     }
 
     private static ProductRowViewModel ToRow(Product product) => new()

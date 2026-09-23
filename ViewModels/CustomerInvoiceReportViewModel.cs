@@ -250,6 +250,10 @@ public partial class CustomerInvoiceReportViewModel : EditableGridViewModelBase<
             row.StartAsNewRow();
             Rows.Add(row);
         }
+        else if (!Rows[^1].IsEditing)
+        {
+            Rows[^1].StartAsNewRow();
+        }
     }
 
     private SaleEntryRowViewModel ToRow(Sale sale)

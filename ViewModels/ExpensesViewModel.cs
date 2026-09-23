@@ -161,6 +161,10 @@ public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryR
             row.StartAsNewRow();
             Rows.Add(row);
         }
+        else if (!Rows[^1].IsEditing)
+        {
+            Rows[^1].StartAsNewRow();
+        }
     }
 
     private static ExpenseEntryRowViewModel ToRow(Expense expense) => new()

@@ -38,10 +38,13 @@ public abstract partial class EditableRowViewModelBase : ObservableObject
     public void CancelEdit()
     {
         if (IsNewRow)
+        {
             ClearFields();
-        else
-            RestoreSnapshot();
+            IsEditing = true;
+            return;
+        }
 
+        RestoreSnapshot();
         IsEditing = false;
     }
 
