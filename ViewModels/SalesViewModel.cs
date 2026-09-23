@@ -13,6 +13,10 @@ public partial class SalesViewModel : MonthFilteredPageViewModelBase
     public override string Title => "فاتورة المبيعات";
 
     public ObservableCollection<SaleRow> Rows { get; } = [];
+    public ObservableCollection<NamedOption> Clients { get; } = [];
+
+    [ObservableProperty]
+    private NamedOption? _selectedClient;
 
     [ObservableProperty]
     private string? _statusMessage;
@@ -29,21 +33,45 @@ public partial class SalesViewModel : MonthFilteredPageViewModelBase
     public SalesViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
         _dbFactory = dbFactory;
-        _ = LoadAsync();
+        _ = InitializeAsync();
     }
 
     protected override void OnMonthFilterChanged() => _ = LoadAsync();
+
+    partial void OnSelectedClientChanged(NamedOption? value) => _ = LoadAsync();
+
+    private async Task InitializeAsync()
+    {
+        await LoadClientsAsync();
+        SelectedClient = Clients.FirstOrDefault();
+    }
+
+    private async Task LoadClientsAsync()
+    {
+        await using var db = await _dbFactory.CreateDbContextAsync();
+        var clients = await db.Clients.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
+
+        Clients.Clear();
+        Clients.Add(new NamedOption { Id = 0, Name = "الكل" });
+        foreach (var client in clients)
+            Clients.Add(new NamedOption { Id = client.Id, Name = client.Name });
+    }
 
     private async Task LoadAsync()
     {
         try
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
-            var sales = await db.Sales
+            var query = db.Sales
                 .AsNoTracking()
                 .Include(s => s.Product)
                 .Include(s => s.Client)
-                .Where(s => s.Date.StartsWith(SelectedMonthPrefix))
+                .Where(s => s.Date.StartsWith(SelectedMonthPrefix));
+
+            if (SelectedClient is { Id: > 0 })
+                query = query.Where(s => s.ClientId == SelectedClient.Id);
+
+            var sales = await query
                 .OrderByDescending(s => s.Date)
                 .ThenByDescending(s => s.Id)
                 .ToListAsync();

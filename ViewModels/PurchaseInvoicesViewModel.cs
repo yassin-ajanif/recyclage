@@ -13,6 +13,10 @@ public partial class PurchaseInvoicesViewModel : MonthFilteredPageViewModelBase
     public override string Title => "فاتورة المشتريات";
 
     public ObservableCollection<PurchaseInvoiceRow> Rows { get; } = [];
+    public ObservableCollection<NamedOption> Suppliers { get; } = [];
+
+    [ObservableProperty]
+    private NamedOption? _selectedSupplier;
 
     [ObservableProperty]
     private string? _statusMessage;
@@ -29,21 +33,45 @@ public partial class PurchaseInvoicesViewModel : MonthFilteredPageViewModelBase
     public PurchaseInvoicesViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
         _dbFactory = dbFactory;
-        _ = LoadAsync();
+        _ = InitializeAsync();
     }
 
     protected override void OnMonthFilterChanged() => _ = LoadAsync();
+
+    partial void OnSelectedSupplierChanged(NamedOption? value) => _ = LoadAsync();
+
+    private async Task InitializeAsync()
+    {
+        await LoadSuppliersAsync();
+        SelectedSupplier = Suppliers.FirstOrDefault();
+    }
+
+    private async Task LoadSuppliersAsync()
+    {
+        await using var db = await _dbFactory.CreateDbContextAsync();
+        var suppliers = await db.Suppliers.AsNoTracking().OrderBy(s => s.Name).ToListAsync();
+
+        Suppliers.Clear();
+        Suppliers.Add(new NamedOption { Id = 0, Name = "الكل" });
+        foreach (var supplier in suppliers)
+            Suppliers.Add(new NamedOption { Id = supplier.Id, Name = supplier.Name });
+    }
 
     private async Task LoadAsync()
     {
         try
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
-            var invoices = await db.PurchaseInvoices
+            var query = db.PurchaseInvoices
                 .AsNoTracking()
                 .Include(p => p.Product)
                 .Include(p => p.Supplier)
-                .Where(p => p.Date.StartsWith(SelectedMonthPrefix))
+                .Where(p => p.Date.StartsWith(SelectedMonthPrefix));
+
+            if (SelectedSupplier is { Id: > 0 })
+                query = query.Where(p => p.SupplierId == SelectedSupplier.Id);
+
+            var invoices = await query
                 .OrderByDescending(p => p.Date)
                 .ThenByDescending(p => p.Id)
                 .ToListAsync();

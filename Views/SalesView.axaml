@@ -11,6 +11,12 @@
             <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,16,0">
                 <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
                 <TextBlock Text="عرض كامل — محسوب من جدول المبيعات" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+                <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                    <TextBlock Text="اختر الزبون:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <ComboBox ItemsSource="{Binding Clients}"
+                              SelectedItem="{Binding SelectedClient}"
+                              MinWidth="220"/>
+                </StackPanel>
             </StackPanel>
             <views:MonthFilterBar Grid.Column="1"
                                   VerticalAlignment="Center"
