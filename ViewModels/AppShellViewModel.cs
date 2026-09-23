@@ -47,7 +47,7 @@ public partial class AppShellViewModel : ObservableObject
     private void GoExpenses() => Navigate("expenses", () => _services.GetRequiredService<ExpensesViewModel>());
 
     [RelayCommand]
-    private void GoMonthlyClosing() => Navigate("monthly", () => new MonthlyClosingReportViewModel());
+    private void GoMonthlyClosing() => Navigate("monthly", () => _services.GetRequiredService<MonthlyClosingReportViewModel>());
 
     [RelayCommand]
     private void GoSupplierReport() => Navigate("supplier-report", () => _services.GetRequiredService<SupplierInvoiceReportViewModel>());

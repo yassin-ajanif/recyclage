@@ -5,11 +5,14 @@ namespace Recyclage.ViewModels;
 
 public partial class MonthFilterOption : ObservableObject
 {
-    private static readonly string[] ArabicNames =
+    public static readonly string[] ArabicNames =
     [
         "يناير", "فبراير", "مارس", "أبريل", "ماي", "يونيو",
         "يوليوز", "غشت", "شتنبر", "أكتوبر", "نونبر", "دجنبر"
     ];
+
+    public static string FormatMonthYear(int year, int month) =>
+        $"{ArabicNames[month - 1]} {year}";
 
     public int Number { get; init; }
 
