@@ -8,6 +8,8 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<Client> Clients => Set<Client>();
+    public DbSet<Supplier> Suppliers => Set<Supplier>();
     public DbSet<AppSettingsRow> AppSettings => Set<AppSettingsRow>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -17,6 +19,22 @@ public class AppDbContext : DbContext
             e.Property(s => s.CompanyCapital).HasPrecision(18, 2);
             e.Property(s => s.BackupIntervalUnit).IsRequired().HasMaxLength(16);
             e.Property(s => s.BackupDirectory).IsRequired();
+        });
+
+        modelBuilder.Entity<Client>(e =>
+        {
+            e.Property(c => c.Name).IsRequired().HasMaxLength(200);
+            e.Property(c => c.Phone).IsRequired().HasMaxLength(32);
+            e.Property(c => c.Ice).IsRequired().HasMaxLength(32);
+            e.HasIndex(c => c.Name);
+        });
+
+        modelBuilder.Entity<Supplier>(e =>
+        {
+            e.Property(s => s.Name).IsRequired().HasMaxLength(200);
+            e.Property(s => s.Phone).IsRequired().HasMaxLength(32);
+            e.Property(s => s.Ice).IsRequired().HasMaxLength(32);
+            e.HasIndex(s => s.Name);
         });
 
         modelBuilder.Entity<Product>(e =>

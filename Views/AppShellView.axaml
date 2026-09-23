@@ -121,6 +121,16 @@
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     Classes="nav-item"/>
+                            <Button Content="الموردون"
+                                    Command="{Binding GoSuppliersCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
+                            <Button Content="الزبائن"
+                                    Command="{Binding GoClientsCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
                             <Button Content="الإعدادات"
                                     Command="{Binding GoCompanyCapitalCommand}"
                                     HorizontalAlignment="Stretch"

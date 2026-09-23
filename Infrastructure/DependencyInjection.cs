@@ -19,7 +19,11 @@ public static class DependencyInjection
 
         services.AddSingleton<AppShellViewModel>();
         services.AddTransient<ProductsViewModel>();
+        services.AddTransient<ClientsViewModel>();
+        services.AddTransient<SuppliersViewModel>();
         services.AddTransient<CompanyCapitalViewModel>();
+        services.AddTransient<SupplierInvoiceReportViewModel>();
+        services.AddTransient<CustomerInvoiceReportViewModel>();
 
         return services;
     }
