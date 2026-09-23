@@ -9,7 +9,7 @@ using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
-public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<PurchaseInvoiceEntryRowViewModel>
+public partial class SupplierInvoiceReportViewModel : MonthFilteredEditableGridViewModelBase<PurchaseInvoiceEntryRowViewModel>
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
     private Dictionary<string, int> _buyingProductIdsByName = [];
@@ -70,6 +70,8 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
 
     partial void OnSelectedSupplierChanged(NamedOption? value) => _ = LoadRowsAsync();
 
+    protected override void OnMonthFilterChanged() => _ = LoadRowsAsync();
+
     private async Task LoadLookupsAsync()
     {
         await using var db = await _dbFactory.CreateDbContextAsync();
@@ -107,7 +109,7 @@ public partial class SupplierInvoiceReportViewModel : EditableGridViewModelBase<
         var invoices = await db.PurchaseInvoices
             .AsNoTracking()
             .Include(p => p.Product)
-            .Where(p => p.SupplierId == SelectedSupplier.Id)
+            .Where(p => p.SupplierId == SelectedSupplier.Id && p.Date.StartsWith(SelectedMonthPrefix))
             .OrderByDescending(p => p.Date)
             .ThenByDescending(p => p.Id)
             .ToListAsync();

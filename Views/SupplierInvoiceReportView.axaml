@@ -2,28 +2,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Recyclage.ViewModels"
              xmlns:behaviors="using:Recyclage.Behaviors"
+             xmlns:views="using:Recyclage.Views"
              x:Class="Recyclage.Views.SupplierInvoiceReportView"
              x:DataType="vm:SupplierInvoiceReportViewModel"
              FlowDirection="RightToLeft">
 
     <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="24">
-        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
-            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="اضغط «تعديل» لتغيير سطر، أو اكتب في السطر الأخير ثم «حفظ»."
-                       Opacity="0.6"
-                       FontSize="13"
-                       HorizontalAlignment="Stretch"
-                       TextAlignment="Right"/>
-        </StackPanel>
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,16">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,16,0">
+                <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+                <TextBlock Text="اضغط «تعديل» لتغيير سطر، أو اكتب في السطر الأخير ثم «حفظ»."
+                           Opacity="0.6"
+                           FontSize="13"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Right"/>
+                <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                    <TextBlock Text="اختر المورد:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <ComboBox ItemsSource="{Binding Suppliers}"
+                              SelectedItem="{Binding SelectedSupplier}"
+                              MinWidth="220"/>
+                </StackPanel>
+            </StackPanel>
+            <views:MonthFilterBar Grid.Column="1"
+                                  VerticalAlignment="Center"
+                                  SelectMonthCommand="{Binding SelectMonthCommand}"/>
+        </Grid>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" Margin="0,0,0,8" HorizontalAlignment="Left">
-            <TextBlock Text="اختر المورد:" VerticalAlignment="Center" FontWeight="SemiBold"/>
-            <ComboBox ItemsSource="{Binding Suppliers}"
-                      SelectedItem="{Binding SelectedSupplier}"
-                      MinWidth="220"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Spacing="4" Margin="0,0,0,8">
+        <StackPanel Grid.Row="1" Spacing="4" Margin="0,0,0,8">
             <TextBlock Text="أضف منتجات «للشراء» من الإعدادات → المنتجات"
                        Foreground="#B45309"
                        TextWrapping="Wrap"
@@ -33,7 +38,7 @@
                        TextWrapping="Wrap"/>
         </StackPanel>
 
-        <Grid Grid.Row="3" RowDefinitions="*,Auto">
+        <Grid Grid.Row="2" RowDefinitions="*,Auto">
             <DataGrid Grid.Row="0"
                       ItemsSource="{Binding Rows}"
                       AutoGenerateColumns="False"

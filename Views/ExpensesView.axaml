@@ -2,19 +2,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Recyclage.ViewModels"
              xmlns:behaviors="using:Recyclage.Behaviors"
+             xmlns:views="using:Recyclage.Views"
              x:Class="Recyclage.Views.ExpensesView"
              x:DataType="vm:ExpensesViewModel"
              FlowDirection="RightToLeft">
 
     <Grid RowDefinitions="Auto,Auto,*" Margin="24">
-        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
-            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="اضغط «تعديل» لتغيير سطر، أو اكتب في السطر الأخير ثم «حفظ»."
-                       Opacity="0.6"
-                       FontSize="13"
-                       HorizontalAlignment="Stretch"
-                       TextAlignment="Right"/>
-        </StackPanel>
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,16">
+            <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,16,0">
+                <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+                <TextBlock Text="اضغط «تعديل» لتغيير سطر، أو اكتب في السطر الأخير ثم «حفظ»."
+                           Opacity="0.6"
+                           FontSize="13"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Right"/>
+            </StackPanel>
+            <views:MonthFilterBar Grid.Column="1"
+                                  VerticalAlignment="Center"
+                                  SelectMonthCommand="{Binding SelectMonthCommand}"/>
+        </Grid>
 
         <TextBlock Grid.Row="1"
                    Text="{Binding StatusMessage}"

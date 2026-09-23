@@ -9,7 +9,7 @@ using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
-public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryRowViewModel>
+public partial class ExpensesViewModel : MonthFilteredEditableGridViewModelBase<ExpenseEntryRowViewModel>
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
@@ -38,6 +38,8 @@ public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryR
     private void OnRowsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
         RecalculateFooterTotals();
 
+    protected override void OnMonthFilterChanged() => _ = LoadAsync();
+
     [RelayCommand]
     private async Task LoadAsync()
     {
@@ -48,6 +50,7 @@ public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryR
             await using var db = await _dbFactory.CreateDbContextAsync();
             var expenses = await db.Expenses
                 .AsNoTracking()
+                .Where(e => e.Date.StartsWith(SelectedMonthPrefix))
                 .OrderByDescending(e => e.Date)
                 .ThenByDescending(e => e.Id)
                 .ToListAsync();

@@ -174,5 +174,50 @@
         <Style Selector="Button.save-action:pressed /template/ ContentPresenter">
             <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
         </Style>
+
+        <Style Selector="Button.month-filter">
+            <Setter Property="Background" Value="{StaticResource InputFieldBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource InputFieldBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.month-filter /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.month-filter.selected">
+            <Setter Property="Background" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.month-filter.selected /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.month-filter.selected:pointerover">
+            <Setter Property="Background" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.month-filter.selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.month-filter.selected:pressed">
+            <Setter Property="Background" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.month-filter.selected:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.month-filter.current">
+            <Setter Property="BorderBrush" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style Selector="Button.month-filter.current:not(.selected) /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
     </Application.Styles>
 </Application>
