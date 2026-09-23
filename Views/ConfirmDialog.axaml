@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Recyclage.Views.ConfirmDialog"
+        Title="تأكيد الحذف"
+        Width="420"
+        SizeToContent="Height"
+        MinHeight="160"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="RightToLeft">
+
+    <Border Padding="24" Background="White">
+        <StackPanel Spacing="20">
+            <TextBlock x:Name="MessageText"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       HorizontalAlignment="Stretch"
+                       TextAlignment="Right"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Spacing="8">
+                <Button x:Name="YesButton"
+                        Content="نعم، احذف"
+                        MinWidth="100"
+                        Padding="16,8"
+                        Click="OnYesClick"/>
+                <Button Content="إلغاء"
+                        MinWidth="100"
+                        Padding="16,8"
+                        Click="OnNoClick"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

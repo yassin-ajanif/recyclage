@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using Recyclage.Shared.Database;
 using Recyclage.Shared.Models;
+using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
@@ -203,6 +204,10 @@ public partial class SupplierInvoiceReportViewModel : PageViewModelBase
     private async Task DeleteRow(PurchaseInvoiceEntryRowViewModel row)
     {
         if (row.Id == 0)
+            return;
+
+        var label = string.IsNullOrWhiteSpace(row.ProductName) ? null : row.ProductName;
+        if (!await ConfirmDialogService.ConfirmDeleteAsync(label))
             return;
 
         IsBusy = true;
