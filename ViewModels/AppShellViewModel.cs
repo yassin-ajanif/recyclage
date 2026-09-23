@@ -46,10 +46,10 @@ public partial class AppShellViewModel : ObservableObject
     private void ToggleSettings() => SettingsExpanded = !SettingsExpanded;
 
     [RelayCommand]
-    private void GoPurchaseInvoices() => Navigate("purchases", () => new PurchaseInvoicesViewModel());
+    private void GoPurchaseInvoices() => Navigate("purchases", () => _services.GetRequiredService<PurchaseInvoicesViewModel>());
 
     [RelayCommand]
-    private void GoSales() => Navigate("sales", () => new SalesViewModel());
+    private void GoSales() => Navigate("sales", () => _services.GetRequiredService<SalesViewModel>());
 
     [RelayCommand]
     private void GoExpenses() => Navigate("expenses", () => new ExpensesViewModel());

@@ -10,6 +10,8 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Client> Clients => Set<Client>();
     public DbSet<Supplier> Suppliers => Set<Supplier>();
+    public DbSet<PurchaseInvoice> PurchaseInvoices => Set<PurchaseInvoice>();
+    public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<AppSettingsRow> AppSettings => Set<AppSettingsRow>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,6 +37,36 @@ public class AppDbContext : DbContext
             e.Property(s => s.Phone).IsRequired().HasMaxLength(32);
             e.Property(s => s.Ice).IsRequired().HasMaxLength(32);
             e.HasIndex(s => s.Name);
+        });
+
+        modelBuilder.Entity<PurchaseInvoice>(e =>
+        {
+            e.Property(p => p.Date).IsRequired().HasMaxLength(10);
+            e.Property(p => p.Quantity).HasPrecision(18, 3);
+            e.Property(p => p.UnitPrice).HasPrecision(18, 2);
+            e.Property(p => p.TransportCost).HasPrecision(18, 2);
+            e.Property(p => p.Total).HasPrecision(18, 2);
+            e.Property(p => p.Paid).HasPrecision(18, 2);
+            e.Property(p => p.Remaining).HasPrecision(18, 2);
+            e.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(p => p.Supplier).WithMany().HasForeignKey(p => p.SupplierId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(p => p.SupplierId);
+            e.HasIndex(p => p.Date);
+        });
+
+        modelBuilder.Entity<Sale>(e =>
+        {
+            e.Property(s => s.Date).IsRequired().HasMaxLength(10);
+            e.Property(s => s.Quantity).HasPrecision(18, 3);
+            e.Property(s => s.UnitPrice).HasPrecision(18, 2);
+            e.Property(s => s.TransportCost).HasPrecision(18, 2);
+            e.Property(s => s.Total).HasPrecision(18, 2);
+            e.Property(s => s.Paid).HasPrecision(18, 2);
+            e.Property(s => s.Remaining).HasPrecision(18, 2);
+            e.HasOne(s => s.Product).WithMany().HasForeignKey(s => s.ProductId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(s => s.Client).WithMany().HasForeignKey(s => s.ClientId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(s => s.ClientId);
+            e.HasIndex(s => s.Date);
         });
 
         modelBuilder.Entity<Product>(e =>

@@ -5,20 +5,30 @@
              x:DataType="vm:SupplierInvoiceReportViewModel"
              FlowDirection="RightToLeft">
 
-    <Grid RowDefinitions="Auto,Auto,*" Margin="24">
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="24">
         <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
             <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="إدخال يومي — فاتورة لمورد واحد" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="إدخال يومي — فاتورة لمورد واحد. الحفظ تلقائي عند الخروج من الحقل."
+                       Opacity="0.6"
+                       FontSize="13"
+                       HorizontalAlignment="Stretch"
+                       TextAlignment="Right"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" Margin="0,0,0,16" HorizontalAlignment="Left">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" Margin="0,0,0,8" HorizontalAlignment="Left">
             <TextBlock Text="اختر المورد:" VerticalAlignment="Center" FontWeight="SemiBold"/>
             <ComboBox ItemsSource="{Binding Suppliers}"
                       SelectedItem="{Binding SelectedSupplier}"
                       MinWidth="220"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="2"
+        <TextBlock Grid.Row="2"
+                   Text="{Binding StatusMessage}"
+                   Foreground="#B45309"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"/>
+
+        <DataGrid Grid.Row="3"
                   ItemsSource="{Binding Rows}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
@@ -27,14 +37,85 @@
                   BorderThickness="1"
                   BorderBrush="#D1D5DB">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="تاريخ" Binding="{Binding Date}" Width="110"/>
-                <DataGridTextColumn Header="الكمية" Binding="{Binding Quantity}" Width="90"/>
-                <DataGridTextColumn Header="منتج" Binding="{Binding Product}" Width="*"/>
-                <DataGridTextColumn Header="ثمن" Binding="{Binding UnitPrice}" Width="100"/>
-                <DataGridTextColumn Header="نقل" Binding="{Binding TransportCost}" Width="100"/>
-                <DataGridTextColumn Header="المجموع" Binding="{Binding Total}" Width="110"/>
-                <DataGridTextColumn Header="دفع" Binding="{Binding Paid}" Width="100"/>
-                <DataGridTextColumn Header="الباقي" Binding="{Binding Remaining}" Width="100"/>
+                <DataGridTemplateColumn Header="تاريخ" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <TextBox Text="{Binding Date, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="الكمية" Width="90">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <TextBox Text="{Binding Quantity, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="منتج" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <ComboBox ItemsSource="{Binding $parent[DataGrid].((vm:SupplierInvoiceReportViewModel)DataContext).BuyingProducts}"
+                                      SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                                      Margin="4,2"
+                                      SelectionChanged="OnProductChanged"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="ثمن" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <TextBox Text="{Binding UnitPrice, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="نقل" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <TextBox Text="{Binding TransportCost, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="المجموع" Width="110">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <TextBlock Text="{Binding Total}" Margin="4,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="دفع" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <TextBox Text="{Binding Paid, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="الباقي" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <TextBlock Text="{Binding Remaining}" Margin="4,6" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="حذف" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
+                            <Button Content="حذف"
+                                    Command="{Binding $parent[DataGrid].((vm:SupplierInvoiceReportViewModel)DataContext).DeleteRowCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding CanDelete}"
+                                    HorizontalAlignment="Center"
+                                    Padding="8,4"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
