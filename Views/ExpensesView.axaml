@@ -5,13 +5,23 @@
              x:DataType="vm:ExpensesViewModel"
              FlowDirection="RightToLeft">
 
-    <Grid RowDefinitions="Auto,*" Margin="24">
+    <Grid RowDefinitions="Auto,Auto,*" Margin="24">
         <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
             <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="عرض كامل — محسوب من جدول المصاريف" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="إدخال يومي — المصاريف. الحفظ تلقائي عند الخروج من الحقل."
+                       Opacity="0.6"
+                       FontSize="13"
+                       HorizontalAlignment="Stretch"
+                       TextAlignment="Right"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="1"
+        <TextBlock Grid.Row="1"
+                   Text="{Binding StatusMessage}"
+                   Foreground="#B45309"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"/>
+
+        <DataGrid Grid.Row="2"
                   ItemsSource="{Binding Rows}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
@@ -20,10 +30,50 @@
                   BorderThickness="1"
                   BorderBrush="#D1D5DB">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="تاريخ" Binding="{Binding Date}" Width="120"/>
-                <DataGridTextColumn Header="نوع المصاريف" Binding="{Binding ExpenseType}" Width="*"/>
-                <DataGridTextColumn Header="الواجب" Binding="{Binding Amount}" Width="140"/>
-                <DataGridTextColumn Header="ملاحظة" Binding="{Binding Description}" Width="*"/>
+                <DataGridTemplateColumn Header="تاريخ" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ExpenseEntryRowViewModel">
+                            <TextBox Text="{Binding Date, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="نوع المصاريف" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ExpenseEntryRowViewModel">
+                            <TextBox Text="{Binding ExpenseType, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="الواجب" Width="140">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ExpenseEntryRowViewModel">
+                            <TextBox Text="{Binding Amount, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="ملاحظة" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ExpenseEntryRowViewModel">
+                            <TextBox Text="{Binding Description, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="حذف" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:ExpenseEntryRowViewModel">
+                            <Button Content="حذف"
+                                    Command="{Binding $parent[DataGrid].((vm:ExpensesViewModel)DataContext).DeleteRowCommand}"
+                                    CommandParameter="{Binding}"
+                                    IsVisible="{Binding CanDelete}"
+                                    HorizontalAlignment="Center"
+                                    Padding="8,4"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddTransient<CustomerInvoiceReportViewModel>();
         services.AddTransient<PurchaseInvoicesViewModel>();
         services.AddTransient<SalesViewModel>();
+        services.AddTransient<ExpensesViewModel>();
 
         return services;
     }

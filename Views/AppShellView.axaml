@@ -55,6 +55,11 @@
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     Classes="nav-item"/>
+                            <Button Content="فاتورة المصاريف"
+                                    Command="{Binding GoExpensesCommand}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    Classes="nav-item"/>
                         </StackPanel>
 
                         <!-- حساباتي -->
@@ -80,11 +85,6 @@
                                     Classes="nav-item"/>
                             <Button Content="فاتورة المبيعات"
                                     Command="{Binding GoSalesCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="فاتورة المصاريف"
-                                    Command="{Binding GoExpensesCommand}"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     Classes="nav-item"/>

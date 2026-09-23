@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Supplier> Suppliers => Set<Supplier>();
     public DbSet<PurchaseInvoice> PurchaseInvoices => Set<PurchaseInvoice>();
     public DbSet<Sale> Sales => Set<Sale>();
+    public DbSet<Expense> Expenses => Set<Expense>();
     public DbSet<AppSettingsRow> AppSettings => Set<AppSettingsRow>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -67,6 +68,16 @@ public class AppDbContext : DbContext
             e.HasOne(s => s.Client).WithMany().HasForeignKey(s => s.ClientId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(s => s.ClientId);
             e.HasIndex(s => s.Date);
+        });
+
+        modelBuilder.Entity<Expense>(e =>
+        {
+            e.Property(x => x.Date).IsRequired().HasMaxLength(10);
+            e.Property(x => x.ExpenseType).IsRequired().HasMaxLength(200);
+            e.Property(x => x.Amount).HasPrecision(18, 2);
+            e.Property(x => x.Description).IsRequired().HasMaxLength(500);
+            e.HasIndex(x => x.Date);
+            e.HasIndex(x => x.ExpenseType);
         });
 
         modelBuilder.Entity<Product>(e =>

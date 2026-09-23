@@ -44,6 +44,19 @@ public static class DbSeeder
 
         SeedDemoPurchaseInvoices(db);
         SeedDemoSales(db);
+        SeedDemoExpenses(db);
+    }
+
+    private static void SeedDemoExpenses(AppDbContext db)
+    {
+        if (db.Expenses.Any())
+            return;
+
+        db.Expenses.AddRange(
+            new Expense { Date = "2026-11-20", ExpenseType = "إيجار", Amount = 3500m, Description = "إيجار المحل" },
+            new Expense { Date = "2026-11-17", ExpenseType = "وقود", Amount = 850m, Description = "نقل البضاعة" },
+            new Expense { Date = "2026-11-12", ExpenseType = "صيانة", Amount = 1200m, Description = "إصلاح الميزان" });
+        db.SaveChanges();
     }
 
     private static void SeedDemoPurchaseInvoices(AppDbContext db)
