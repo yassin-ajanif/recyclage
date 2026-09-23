@@ -8,13 +8,15 @@ using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
-public partial class SuppliersViewModel : PageViewModelBase
+public partial class SuppliersViewModel : EditableGridViewModelBase<SupplierRowViewModel>
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
     public override string Title => "الموردون";
 
     public ObservableCollection<SupplierRowViewModel> Rows { get; } = [];
+
+    protected override ObservableCollection<SupplierRowViewModel> EditableRows => Rows;
 
     [ObservableProperty]
     private bool _isBusy;
@@ -57,10 +59,10 @@ public partial class SuppliersViewModel : PageViewModelBase
         }
     }
 
-    public async Task SaveRowAsync(SupplierRowViewModel row)
+    public override async Task<bool> SaveRowAsync(SupplierRowViewModel row)
     {
         if (row.IsEmpty || IsBusy)
-            return;
+            return false;
 
         IsBusy = true;
         StatusMessage = null;
@@ -86,17 +88,21 @@ public partial class SuppliersViewModel : PageViewModelBase
             {
                 var entity = await db.Suppliers.FirstOrDefaultAsync(s => s.Id == row.Id);
                 if (entity is null)
-                    return;
+                    return false;
 
                 entity.Name = row.Name.Trim();
                 entity.Phone = row.Phone.Trim();
                 entity.Ice = row.Ice.Trim();
                 await db.SaveChangesAsync();
+                row.EndEdit();
             }
+
+            return true;
         }
         catch (Exception ex)
         {
             StatusMessage = $"تعذر حفظ المورد: {ex.Message}";
+            return false;
         }
         finally
         {
@@ -141,7 +147,11 @@ public partial class SuppliersViewModel : PageViewModelBase
     private void EnsureTrailingEmptyRow()
     {
         if (Rows.Count == 0 || !Rows[^1].IsEmpty)
-            Rows.Add(new SupplierRowViewModel());
+        {
+            var row = new SupplierRowViewModel();
+            row.StartAsNewRow();
+            Rows.Add(row);
+        }
     }
 
     private static SupplierRowViewModel ToRow(Supplier supplier) => new()

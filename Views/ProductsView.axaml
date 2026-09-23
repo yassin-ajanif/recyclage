@@ -8,7 +8,7 @@
     <Grid RowDefinitions="Auto,Auto,*" Margin="24">
         <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
             <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="اكتب في الجدول — الحفظ تلقائي عند الخروج من الحقل"
+            <TextBlock Text="اضغط «تعديل» لتغيير سطر، أو اكتب في السطر الأخير ثم «حفظ»."
                        Opacity="0.6"
                        FontSize="13"
                        HorizontalAlignment="Stretch"
@@ -34,9 +34,10 @@
                 <DataGridTemplateColumn Header="الاسم" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:ProductRowViewModel">
-                            <TextBox Text="{Binding Name, Mode=TwoWay}"
-                                     Margin="4,2"
-                                     LostFocus="OnAutoSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <TextBox Text="{Binding Name, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -44,10 +45,12 @@
                 <DataGridTemplateColumn Header="نوع المنتج" Width="130">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:ProductRowViewModel">
-                            <ComboBox ItemsSource="{x:Static vm:ProductsViewModel.ProductTypeLabels}"
-                                      SelectedItem="{Binding ProductType, Mode=TwoWay}"
-                                      Margin="4,2"
-                                      SelectionChanged="OnComboBoxSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding ProductType}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <ComboBox ItemsSource="{x:Static vm:ProductsViewModel.ProductTypeLabels}"
+                                          SelectedItem="{Binding ProductType, Mode=TwoWay}"
+                                          IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -55,9 +58,10 @@
                 <DataGridTemplateColumn Header="الوحدة" Width="90">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:ProductRowViewModel">
-                            <TextBox Text="{Binding DefaultUnit, Mode=TwoWay}"
-                                     Margin="4,2"
-                                     LostFocus="OnAutoSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding DefaultUnit}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <TextBox Text="{Binding DefaultUnit, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -65,22 +69,39 @@
                 <DataGridTemplateColumn Header="ثمن افتراضي" Width="120">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:ProductRowViewModel">
-                            <TextBox Text="{Binding DefaultUnitPrice, Mode=TwoWay}"
-                                     Margin="4,2"
-                                     LostFocus="OnAutoSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding DefaultUnitPrice}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <TextBox Text="{Binding DefaultUnitPrice, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="حذف" Width="80">
+                <DataGridTemplateColumn Header="إجراءات" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:ProductRowViewModel">
-                            <Button Content="حذف"
-                                    Command="{Binding $parent[DataGrid].((vm:ProductsViewModel)DataContext).DeleteRowCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding CanDelete}"
-                                    HorizontalAlignment="Center"
-                                    Padding="8,4"/>
+                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                <Button Content="تعديل"
+                                        Command="{Binding $parent[DataGrid].((vm:ProductsViewModel)DataContext).BeginEditRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding ShowEditDelete}"
+                                        Padding="8,4"/>
+                                <Button Content="حذف"
+                                        Command="{Binding $parent[DataGrid].((vm:ProductsViewModel)DataContext).DeleteRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding ShowEditDelete}"
+                                        Padding="8,4"/>
+                                <Button Content="حفظ"
+                                        Command="{Binding $parent[DataGrid].((vm:ProductsViewModel)DataContext).CommitRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding ShowSaveCancel}"
+                                        Padding="8,4"/>
+                                <Button Content="إلغاء"
+                                        Command="{Binding $parent[DataGrid].((vm:ProductsViewModel)DataContext).CancelEditRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding ShowSaveCancel}"
+                                        Padding="8,4"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

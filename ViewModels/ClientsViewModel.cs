@@ -8,13 +8,15 @@ using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
-public partial class ClientsViewModel : PageViewModelBase
+public partial class ClientsViewModel : EditableGridViewModelBase<ClientRowViewModel>
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
     public override string Title => "الزبائن";
 
     public ObservableCollection<ClientRowViewModel> Rows { get; } = [];
+
+    protected override ObservableCollection<ClientRowViewModel> EditableRows => Rows;
 
     [ObservableProperty]
     private bool _isBusy;
@@ -57,10 +59,10 @@ public partial class ClientsViewModel : PageViewModelBase
         }
     }
 
-    public async Task SaveRowAsync(ClientRowViewModel row)
+    public override async Task<bool> SaveRowAsync(ClientRowViewModel row)
     {
         if (row.IsEmpty || IsBusy)
-            return;
+            return false;
 
         IsBusy = true;
         StatusMessage = null;
@@ -86,17 +88,21 @@ public partial class ClientsViewModel : PageViewModelBase
             {
                 var entity = await db.Clients.FirstOrDefaultAsync(c => c.Id == row.Id);
                 if (entity is null)
-                    return;
+                    return false;
 
                 entity.Name = row.Name.Trim();
                 entity.Phone = row.Phone.Trim();
                 entity.Ice = row.Ice.Trim();
                 await db.SaveChangesAsync();
+                row.EndEdit();
             }
+
+            return true;
         }
         catch (Exception ex)
         {
             StatusMessage = $"تعذر حفظ الزبون: {ex.Message}";
+            return false;
         }
         finally
         {
@@ -141,7 +147,11 @@ public partial class ClientsViewModel : PageViewModelBase
     private void EnsureTrailingEmptyRow()
     {
         if (Rows.Count == 0 || !Rows[^1].IsEmpty)
-            Rows.Add(new ClientRowViewModel());
+        {
+            var row = new ClientRowViewModel();
+            row.StartAsNewRow();
+            Rows.Add(row);
+        }
     }
 
     private static ClientRowViewModel ToRow(Client client) => new()

@@ -8,13 +8,15 @@ using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
-public partial class ExpensesViewModel : PageViewModelBase
+public partial class ExpensesViewModel : EditableGridViewModelBase<ExpenseEntryRowViewModel>
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
     public override string Title => "فاتورة المصاريف";
 
     public ObservableCollection<ExpenseEntryRowViewModel> Rows { get; } = [];
+
+    protected override ObservableCollection<ExpenseEntryRowViewModel> EditableRows => Rows;
 
     [ObservableProperty]
     private bool _isBusy;
@@ -58,15 +60,15 @@ public partial class ExpensesViewModel : PageViewModelBase
         }
     }
 
-    public async Task SaveRowAsync(ExpenseEntryRowViewModel row)
+    public override async Task<bool> SaveRowAsync(ExpenseEntryRowViewModel row)
     {
         if (row.IsEmpty || IsBusy)
-            return;
+            return false;
 
         if (string.IsNullOrWhiteSpace(row.Date))
         {
             StatusMessage = "التاريخ مطلوب.";
-            return;
+            return false;
         }
 
         IsBusy = true;
@@ -94,18 +96,22 @@ public partial class ExpensesViewModel : PageViewModelBase
             {
                 var entity = await db.Expenses.FirstOrDefaultAsync(e => e.Id == row.Id);
                 if (entity is null)
-                    return;
+                    return false;
 
                 entity.Date = row.Date.Trim();
                 entity.ExpenseType = row.ExpenseType.Trim();
                 entity.Amount = row.Amount;
                 entity.Description = row.Description.Trim();
                 await db.SaveChangesAsync();
+                row.EndEdit();
             }
+
+            return true;
         }
         catch (Exception ex)
         {
             StatusMessage = $"تعذر حفظ المصروف: {ex.Message}";
+            return false;
         }
         finally
         {
@@ -150,7 +156,11 @@ public partial class ExpensesViewModel : PageViewModelBase
     private void EnsureTrailingEmptyRow()
     {
         if (Rows.Count == 0 || !Rows[^1].IsEmpty)
-            Rows.Add(new ExpenseEntryRowViewModel());
+        {
+            var row = new ExpenseEntryRowViewModel();
+            row.StartAsNewRow();
+            Rows.Add(row);
+        }
     }
 
     private static ExpenseEntryRowViewModel ToRow(Expense expense) => new()

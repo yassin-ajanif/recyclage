@@ -8,7 +8,7 @@ using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
-public partial class ProductsViewModel : PageViewModelBase
+public partial class ProductsViewModel : EditableGridViewModelBase<ProductRowViewModel>
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
@@ -17,6 +17,8 @@ public partial class ProductsViewModel : PageViewModelBase
     public static IReadOnlyList<string> ProductTypeLabels { get; } = ["للشراء", "للبيع"];
 
     public ObservableCollection<ProductRowViewModel> Rows { get; } = [];
+
+    protected override ObservableCollection<ProductRowViewModel> EditableRows => Rows;
 
     [ObservableProperty]
     private bool _isBusy;
@@ -60,26 +62,26 @@ public partial class ProductsViewModel : PageViewModelBase
         }
     }
 
-    public async Task SaveRowAsync(ProductRowViewModel row)
+    public override async Task<bool> SaveRowAsync(ProductRowViewModel row)
     {
         if (row.IsEmpty)
-            return;
+            return false;
 
         if (row.DefaultUnitPrice < 0)
         {
             StatusMessage = "الثمن لا يمكن أن يكون سالباً.";
-            return;
+            return false;
         }
 
         var productType = ParseProductType(row.ProductType);
         if (productType is null)
         {
             StatusMessage = "نوع المنتج: للشراء أو للبيع فقط.";
-            return;
+            return false;
         }
 
         if (IsBusy)
-            return;
+            return false;
 
         IsBusy = true;
         StatusMessage = null;
@@ -106,18 +108,22 @@ public partial class ProductsViewModel : PageViewModelBase
             {
                 var entity = await db.Products.FirstOrDefaultAsync(p => p.Id == row.Id);
                 if (entity is null)
-                    return;
+                    return false;
 
                 entity.Name = row.Name.Trim();
                 entity.ProductType = productType.Value;
                 entity.DefaultUnit = string.IsNullOrWhiteSpace(row.DefaultUnit) ? "كغ" : row.DefaultUnit.Trim();
                 entity.DefaultUnitPrice = row.DefaultUnitPrice;
                 await db.SaveChangesAsync();
+                row.EndEdit();
             }
+
+            return true;
         }
         catch (Exception ex)
         {
             StatusMessage = $"تعذر حفظ المنتج: {ex.Message}";
+            return false;
         }
         finally
         {
@@ -162,7 +168,11 @@ public partial class ProductsViewModel : PageViewModelBase
     private void EnsureTrailingEmptyRow()
     {
         if (Rows.Count == 0 || !Rows[^1].IsEmpty)
-            Rows.Add(new ProductRowViewModel());
+        {
+            var row = new ProductRowViewModel();
+            row.StartAsNewRow();
+            Rows.Add(row);
+        }
     }
 
     private static ProductRowViewModel ToRow(Product product) => new()

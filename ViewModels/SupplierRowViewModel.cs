@@ -2,9 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Recyclage.ViewModels;
 
-public partial class SupplierRowViewModel : ObservableObject
+public partial class SupplierRowViewModel : EditableRowViewModelBase
 {
-    public int Id { get; set; }
+    private string _snapshotName = string.Empty;
+    private string _snapshotPhone = string.Empty;
+    private string _snapshotIce = string.Empty;
 
     [ObservableProperty]
     private string _name = string.Empty;
@@ -16,11 +18,25 @@ public partial class SupplierRowViewModel : ObservableObject
     private string _ice = string.Empty;
 
     public bool IsEmpty => string.IsNullOrWhiteSpace(Name);
-    public bool CanDelete => Id > 0;
 
-    public void MarkAsSaved(int id)
+    protected override void CaptureSnapshot()
     {
-        Id = id;
-        OnPropertyChanged(nameof(CanDelete));
+        _snapshotName = Name;
+        _snapshotPhone = Phone;
+        _snapshotIce = Ice;
+    }
+
+    protected override void RestoreSnapshot()
+    {
+        Name = _snapshotName;
+        Phone = _snapshotPhone;
+        Ice = _snapshotIce;
+    }
+
+    protected override void ClearFields()
+    {
+        Name = string.Empty;
+        Phone = string.Empty;
+        Ice = string.Empty;
     }
 }

@@ -8,7 +8,7 @@
     <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="24">
         <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
             <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="إدخال يومي — فاتورة لزبون واحد. الحفظ تلقائي عند الخروج من الحقل."
+            <TextBlock Text="اضغط «تعديل» لتغيير سطر، أو اكتب في السطر الأخير ثم «حفظ»."
                        Opacity="0.6"
                        FontSize="13"
                        HorizontalAlignment="Stretch"
@@ -44,7 +44,10 @@
                 <DataGridTemplateColumn Header="تاريخ" Width="120">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:SaleEntryRowViewModel">
-                            <TextBox Text="{Binding Date, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding Date}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <TextBox Text="{Binding Date, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -52,7 +55,10 @@
                 <DataGridTemplateColumn Header="الكمية" Width="90">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:SaleEntryRowViewModel">
-                            <TextBox Text="{Binding Quantity, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding Quantity}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <TextBox Text="{Binding Quantity, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -60,14 +66,16 @@
                 <DataGridTemplateColumn Header="منتج" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:SaleEntryRowViewModel">
-                            <ComboBox ItemsSource="{Binding ProductNames}"
-                                      SelectedItem="{Binding ProductName, Mode=TwoWay}"
-                                      PlaceholderText="اختر منتج"
-                                      MinWidth="140"
-                                      HorizontalAlignment="Stretch"
-                                      Margin="4,2"
-                                      LostFocus="OnAutoSave"
-                                      SelectionChanged="OnProductChanged"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding ProductName}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <ComboBox ItemsSource="{Binding ProductNames}"
+                                          SelectedItem="{Binding ProductName, Mode=TwoWay}"
+                                          PlaceholderText="اختر منتج"
+                                          MinWidth="140"
+                                          HorizontalAlignment="Stretch"
+                                          IsVisible="{Binding IsEditing}"
+                                          SelectionChanged="OnProductChanged"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -75,7 +83,10 @@
                 <DataGridTemplateColumn Header="ثمن" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:SaleEntryRowViewModel">
-                            <TextBox Text="{Binding UnitPrice, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding UnitPrice}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <TextBox Text="{Binding UnitPrice, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -83,7 +94,10 @@
                 <DataGridTemplateColumn Header="نقل" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:SaleEntryRowViewModel">
-                            <TextBox Text="{Binding TransportCost, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding TransportCost}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <TextBox Text="{Binding TransportCost, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -99,7 +113,10 @@
                 <DataGridTemplateColumn Header="دفع" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:SaleEntryRowViewModel">
-                            <TextBox Text="{Binding Paid, Mode=TwoWay}" Margin="4,2" LostFocus="OnAutoSave"/>
+                            <Grid Margin="4,2">
+                                <TextBlock Text="{Binding Paid}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                <TextBox Text="{Binding Paid, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -112,15 +129,31 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="حذف" Width="80">
+                <DataGridTemplateColumn Header="إجراءات" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:SaleEntryRowViewModel">
-                            <Button Content="حذف"
-                                    Command="{Binding $parent[DataGrid].((vm:CustomerInvoiceReportViewModel)DataContext).DeleteRowCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding CanDelete}"
-                                    HorizontalAlignment="Center"
-                                    Padding="8,4"/>
+                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                <Button Content="تعديل"
+                                        Command="{Binding $parent[DataGrid].((vm:CustomerInvoiceReportViewModel)DataContext).BeginEditRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding ShowEditDelete}"
+                                        Padding="8,4"/>
+                                <Button Content="حذف"
+                                        Command="{Binding $parent[DataGrid].((vm:CustomerInvoiceReportViewModel)DataContext).DeleteRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding ShowEditDelete}"
+                                        Padding="8,4"/>
+                                <Button Content="حفظ"
+                                        Command="{Binding $parent[DataGrid].((vm:CustomerInvoiceReportViewModel)DataContext).CommitRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding ShowSaveCancel}"
+                                        Padding="8,4"/>
+                                <Button Content="إلغاء"
+                                        Command="{Binding $parent[DataGrid].((vm:CustomerInvoiceReportViewModel)DataContext).CancelEditRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding ShowSaveCancel}"
+                                        Padding="8,4"/>
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

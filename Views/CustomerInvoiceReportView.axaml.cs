@@ -12,29 +12,19 @@ public partial class CustomerInvoiceReportView : UserControl
         InitializeComponent();
     }
 
-    private async void OnAutoSave(object? sender, RoutedEventArgs e) =>
-        await SaveRowFromSenderAsync(sender);
-
-    private async void OnProductChanged(object? sender, SelectionChangedEventArgs e)
+    private void OnProductChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (e.AddedItems.Count == 0)
             return;
 
-        await SaveRowFromSenderAsync(sender, applyProduct: true);
-    }
-
-    private async Task SaveRowFromSenderAsync(object? sender, bool applyProduct = false)
-    {
         if (DataContext is not CustomerInvoiceReportViewModel vm)
             return;
 
         if (FindRow(sender) is not SaleEntryRowViewModel row)
             return;
 
-        if (applyProduct && sender is ComboBox combo)
+        if (sender is ComboBox combo)
             vm.ApplyProductSelection(row, combo.SelectedItem as string);
-
-        await vm.SaveRowAsync(row);
     }
 
     private static SaleEntryRowViewModel? FindRow(object? sender)

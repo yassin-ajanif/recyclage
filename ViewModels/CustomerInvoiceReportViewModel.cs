@@ -8,7 +8,7 @@ using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
-public partial class CustomerInvoiceReportViewModel : PageViewModelBase
+public partial class CustomerInvoiceReportViewModel : EditableGridViewModelBase<SaleEntryRowViewModel>
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
     private Dictionary<string, int> _saleProductIdsByName = [];
@@ -18,6 +18,8 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
     public ObservableCollection<NamedOption> Clients { get; } = [];
     public ObservableCollection<string> SaleProductNames { get; } = [];
     public ObservableCollection<SaleEntryRowViewModel> Rows { get; } = [];
+
+    protected override ObservableCollection<SaleEntryRowViewModel> EditableRows => Rows;
 
     [ObservableProperty]
     private NamedOption? _selectedClient;
@@ -102,13 +104,13 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
         EnsureTrailingEmptyRow();
     }
 
-    public async Task SaveRowAsync(SaleEntryRowViewModel row)
+    public override async Task<bool> SaveRowAsync(SaleEntryRowViewModel row)
     {
         if (row.IsEmpty || SelectedClient is null || IsBusy)
-            return;
+            return false;
 
         if (!TryResolveProduct(row, out var productId))
-            return;
+            return false;
 
         row.ProductId = productId;
         row.RecalculateTotals();
@@ -116,7 +118,7 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
         if (row.Quantity <= 0)
         {
             StatusMessage = "الكمية يجب أن تكون أكبر من صفر.";
-            return;
+            return false;
         }
 
         IsBusy = true;
@@ -149,7 +151,7 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
             {
                 var entity = await db.Sales.FirstOrDefaultAsync(s => s.Id == row.Id);
                 if (entity is null)
-                    return;
+                    return false;
 
                 entity.Date = row.Date.Trim();
                 entity.Quantity = row.Quantity;
@@ -161,11 +163,15 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
                 entity.Paid = row.Paid;
                 entity.Remaining = row.Remaining;
                 await db.SaveChangesAsync();
+                row.EndEdit();
             }
+
+            return true;
         }
         catch (Exception ex)
         {
             StatusMessage = $"تعذر حفظ السطر: {ex.Message}";
+            return false;
         }
         finally
         {
@@ -241,6 +247,7 @@ public partial class CustomerInvoiceReportViewModel : PageViewModelBase
         {
             var row = new SaleEntryRowViewModel();
             row.AttachProductNames(SaleProductNames);
+            row.StartAsNewRow();
             Rows.Add(row);
         }
     }
