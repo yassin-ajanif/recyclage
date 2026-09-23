@@ -22,19 +22,11 @@ public partial class AppShellViewModel : ObservableObject
     [ObservableProperty]
     private string? _activePageKey;
 
-    public string InvoicesArrow => InvoicesExpanded ? "▼" : "◀";
-    public string AccountsArrow => AccountsExpanded ? "▼" : "◀";
-    public string SettingsArrow => SettingsExpanded ? "▼" : "◀";
-
     public AppShellViewModel(IServiceProvider services)
     {
         _services = services;
         GoSupplierReport();
     }
-
-    partial void OnInvoicesExpandedChanged(bool value) => OnPropertyChanged(nameof(InvoicesArrow));
-    partial void OnAccountsExpandedChanged(bool value) => OnPropertyChanged(nameof(AccountsArrow));
-    partial void OnSettingsExpandedChanged(bool value) => OnPropertyChanged(nameof(SettingsArrow));
 
     [RelayCommand]
     private void ToggleInvoices() => ToggleSection("invoices");

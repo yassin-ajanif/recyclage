@@ -30,113 +30,95 @@
                     <StackPanel Spacing="4">
 
                         <!-- العمليات -->
-                        <Button Command="{Binding ToggleInvoicesCommand}"
+                        <Button Content="العمليات"
+                                Command="{Binding ToggleInvoicesCommand}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Foreground="#BBF7D0"
-                                FontWeight="SemiBold"
-                                Padding="12,8">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="العمليات" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding InvoicesArrow}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
+                                Classes="nav-section"/>
 
-                        <StackPanel Spacing="2" IsVisible="{Binding InvoicesExpanded}" Margin="0,0,0,8">
-                            <Button Content="فاتورة مورد"
-                                    Command="{Binding GoSupplierReportCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="فاتورة زبون"
-                                    Command="{Binding GoCustomerReportCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="فاتورة المصاريف"
-                                    Command="{Binding GoExpensesCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                        </StackPanel>
+                        <Border Classes="nav-submenu" IsVisible="{Binding InvoicesExpanded}">
+                            <StackPanel Spacing="2">
+                                <Button Content="فاتورة مورد"
+                                        Command="{Binding GoSupplierReportCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="فاتورة زبون"
+                                        Command="{Binding GoCustomerReportCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="فاتورة المصاريف"
+                                        Command="{Binding GoExpensesCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                            </StackPanel>
+                        </Border>
 
                         <!-- حساباتي -->
-                        <Button Command="{Binding ToggleAccountsCommand}"
+                        <Button Content="حساباتي"
+                                Command="{Binding ToggleAccountsCommand}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Foreground="#BBF7D0"
-                                FontWeight="SemiBold"
-                                Padding="12,8">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="حساباتي" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding AccountsArrow}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
+                                Classes="nav-section"/>
 
-                        <StackPanel Spacing="2" IsVisible="{Binding AccountsExpanded}" Margin="0,0,0,8">
-                            <Button Content="فاتورة المشتريات"
-                                    Command="{Binding GoPurchaseInvoicesCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="فاتورة المبيعات"
-                                    Command="{Binding GoSalesCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="حساب آخر شهر"
-                                    Command="{Binding GoMonthlyClosingCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="حساب بين الشركاء"
-                                    Command="{Binding GoPartnerTransactionsCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                        </StackPanel>
+                        <Border Classes="nav-submenu" IsVisible="{Binding AccountsExpanded}">
+                            <StackPanel Spacing="2">
+                                <Button Content="فاتورة المشتريات"
+                                        Command="{Binding GoPurchaseInvoicesCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="فاتورة المبيعات"
+                                        Command="{Binding GoSalesCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="حساب آخر شهر"
+                                        Command="{Binding GoMonthlyClosingCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="حساب بين الشركاء"
+                                        Command="{Binding GoPartnerTransactionsCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                            </StackPanel>
+                        </Border>
 
                         <!-- الإعدادات -->
-                        <Button Command="{Binding ToggleSettingsCommand}"
+                        <Button Content="الإعدادات"
+                                Command="{Binding ToggleSettingsCommand}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Foreground="#BBF7D0"
-                                FontWeight="SemiBold"
-                                Padding="12,8">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="الإعدادات" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding SettingsArrow}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
+                                Classes="nav-section"/>
 
-                        <StackPanel Spacing="2" IsVisible="{Binding SettingsExpanded}">
-                            <Button Content="المنتجات"
-                                    Command="{Binding GoProductsCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="الموردون"
-                                    Command="{Binding GoSuppliersCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="الزبائن"
-                                    Command="{Binding GoClientsCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                            <Button Content="الإعدادات"
-                                    Command="{Binding GoCompanyCapitalCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Classes="nav-item"/>
-                        </StackPanel>
+                        <Border Classes="nav-submenu" IsVisible="{Binding SettingsExpanded}">
+                            <StackPanel Spacing="2">
+                                <Button Content="المنتجات"
+                                        Command="{Binding GoProductsCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="الموردون"
+                                        Command="{Binding GoSuppliersCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="الزبائن"
+                                        Command="{Binding GoClientsCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="الإعدادات"
+                                        Command="{Binding GoCompanyCapitalCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
@@ -144,6 +126,25 @@
     </Grid>
 
     <UserControl.Styles>
+        <Style Selector="Button.nav-section">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#BBF7D0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.nav-section /template/ ContentPresenter">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Border.nav-submenu">
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderThickness" Value="2,0,0,0"/>
+            <Setter Property="Margin" Value="12,2,0,8"/>
+            <Setter Property="Padding" Value="8,0,0,0"/>
+        </Style>
         <Style Selector="Button.nav-item">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -152,10 +153,15 @@
             <Setter Property="Margin" Value="4,2"/>
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.nav-item /template/ ContentPresenter">
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
         <Style Selector="Button.nav-item:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#166534"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
     </UserControl.Styles>
 </UserControl>
