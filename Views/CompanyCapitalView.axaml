@@ -94,7 +94,7 @@
             </Border>
 
             <StackPanel Spacing="8">
-                <Button Content="حفظ"
+                <Button Classes="save-action" Content="حفظ"
                         Command="{Binding SaveCommand}"
                         HorizontalAlignment="Left"
                         MinWidth="120"/>

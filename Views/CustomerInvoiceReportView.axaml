@@ -133,17 +133,17 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:SaleEntryRowViewModel">
                             <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                                <Button Content="تعديل"
+                                <Button Classes="edit-action" Content="تعديل"
                                         Command="{Binding $parent[DataGrid].((vm:CustomerInvoiceReportViewModel)DataContext).BeginEditRowCommand}"
                                         CommandParameter="{Binding}"
                                         IsVisible="{Binding ShowEditDelete}"
                                         Padding="8,4"/>
-                                <Button Content="حذف"
+                                <Button Classes="delete-action" Content="حذف"
                                         Command="{Binding $parent[DataGrid].((vm:CustomerInvoiceReportViewModel)DataContext).DeleteRowCommand}"
                                         CommandParameter="{Binding}"
                                         IsVisible="{Binding ShowEditDelete}"
                                         Padding="8,4"/>
-                                <Button Content="حفظ"
+                                <Button Classes="save-action" Content="حفظ"
                                         Command="{Binding $parent[DataGrid].((vm:CustomerInvoiceReportViewModel)DataContext).CommitRowCommand}"
                                         CommandParameter="{Binding}"
                                         IsVisible="{Binding ShowSaveCancel}"

@@ -4,6 +4,16 @@
              x:Class="Recyclage.App"
              RequestedThemeVariant="Light">
 
+    <Application.Resources>
+        <Color x:Key="EditActionColor">#EA580C</Color>
+        <Color x:Key="DeleteActionColor">#DC2626</Color>
+        <Color x:Key="SaveActionColor">#16A34A</Color>
+        <SolidColorBrush x:Key="EditActionBrush" Color="{StaticResource EditActionColor}"/>
+        <SolidColorBrush x:Key="DeleteActionBrush" Color="{StaticResource DeleteActionColor}"/>
+        <SolidColorBrush x:Key="SaveActionBrush" Color="{StaticResource SaveActionColor}"/>
+        <SolidColorBrush x:Key="ActionButtonTextBrush" Color="White"/>
+    </Application.Resources>
+
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
@@ -19,9 +29,85 @@
             <Setter Property="TextAlignment" Value="Right"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
         </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,8"/>
+        </Style>
         <Style Selector="DataGridColumnHeader TextBlock">
             <Setter Property="TextAlignment" Value="Right"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style Selector="Button.edit-action">
+            <Setter Property="Background" Value="{StaticResource EditActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource EditActionBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.edit-action /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.edit-action:pointerover">
+            <Setter Property="Background" Value="{StaticResource EditActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource EditActionBrush}"/>
+        </Style>
+        <Style Selector="Button.edit-action:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.edit-action:pressed">
+            <Setter Property="Background" Value="{StaticResource EditActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource EditActionBrush}"/>
+        </Style>
+        <Style Selector="Button.edit-action:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+
+        <Style Selector="Button.delete-action">
+            <Setter Property="Background" Value="{StaticResource DeleteActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DeleteActionBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.delete-action /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.delete-action:pointerover">
+            <Setter Property="Background" Value="{StaticResource DeleteActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DeleteActionBrush}"/>
+        </Style>
+        <Style Selector="Button.delete-action:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.delete-action:pressed">
+            <Setter Property="Background" Value="{StaticResource DeleteActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DeleteActionBrush}"/>
+        </Style>
+        <Style Selector="Button.delete-action:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+
+        <Style Selector="Button.save-action">
+            <Setter Property="Background" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.save-action /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.save-action:pointerover">
+            <Setter Property="Background" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SaveActionBrush}"/>
+        </Style>
+        <Style Selector="Button.save-action:pointerover /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
+        </Style>
+        <Style Selector="Button.save-action:pressed">
+            <Setter Property="Background" Value="{StaticResource SaveActionBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SaveActionBrush}"/>
+        </Style>
+        <Style Selector="Button.save-action:pressed /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{StaticResource ActionButtonTextBrush}"/>
         </Style>
     </Application.Styles>
 </Application>
