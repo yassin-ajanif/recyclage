@@ -56,7 +56,7 @@ public partial class AppShellViewModel : ObservableObject
     private void GoCustomerReport() => Navigate("customer-report", () => _services.GetRequiredService<CustomerInvoiceReportViewModel>());
 
     [RelayCommand]
-    private void GoPartnerTransactions() => Navigate("partners", () => new PartnerTransactionsViewModel());
+    private void GoPartnerTransactions() => Navigate("partners", () => _services.GetRequiredService<PartnerTransactionsViewModel>());
 
     [RelayCommand]
     private void GoProducts() => Navigate("products", () => _services.GetRequiredService<ProductsViewModel>());

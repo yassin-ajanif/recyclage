@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<PurchaseInvoice> PurchaseInvoices => Set<PurchaseInvoice>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<Expense> Expenses => Set<Expense>();
+    public DbSet<PartnerTransaction> PartnerTransactions => Set<PartnerTransaction>();
     public DbSet<AppSettingsRow> AppSettings => Set<AppSettingsRow>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -78,6 +79,15 @@ public class AppDbContext : DbContext
             e.Property(x => x.Description).IsRequired().HasMaxLength(500);
             e.HasIndex(x => x.Date);
             e.HasIndex(x => x.ExpenseType);
+        });
+
+        modelBuilder.Entity<PartnerTransaction>(e =>
+        {
+            e.Property(x => x.Date).IsRequired().HasMaxLength(10);
+            e.Property(x => x.PaidByAyoub).HasPrecision(18, 2);
+            e.Property(x => x.ReturnedToMustafa).HasPrecision(18, 2);
+            e.Property(x => x.Details).IsRequired().HasMaxLength(500);
+            e.HasIndex(x => x.Date);
         });
 
         modelBuilder.Entity<Product>(e =>

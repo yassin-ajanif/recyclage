@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Recyclage.ViewModels"
+             xmlns:behaviors="using:Recyclage.Behaviors"
              x:Class="Recyclage.Views.PartnerTransactionsView"
              x:DataType="vm:PartnerTransactionsViewModel"
              FlowDirection="RightToLeft">
@@ -8,24 +9,139 @@
     <Grid RowDefinitions="Auto,*" Margin="24">
         <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
             <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
-            <TextBlock Text="حساب أيوب / مصطفى — عرض وتتبع الرصيد" Opacity="0.6" FontSize="13" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="حساب أيوب / مصطفى — اضغط «تعديل» لتغيير سطر، أو اكتب في السطر الأخير ثم «حفظ»."
+                       Opacity="0.6"
+                       FontSize="13"
+                       HorizontalAlignment="Stretch"
+                       TextAlignment="Right"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding Rows}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  CanUserReorderColumns="False"
-                  GridLinesVisibility="All"
-                  BorderThickness="1">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="تاريخ" Binding="{Binding Date}" Width="110"/>
-                <DataGridTextColumn Header="دفع لي أيوب" Binding="{Binding PaidByAyoub}" Width="*"/>
-                <DataGridTextColumn Header="رجوع لمصطفى" Binding="{Binding ReturnedToMustafa}" Width="*"/>
-                <DataGridTextColumn Header="التفاصيل" Binding="{Binding Details}" Width="*"/>
-                <DataGridTextColumn Header="الباقي لأيوب" Binding="{Binding LeftToAyoub}" Width="*"/>
-                <DataGridTextColumn Header="الباقي لمصطفى" Binding="{Binding LeftToMustafa}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+            <TextBlock Grid.Row="0"
+                       Text="{Binding StatusMessage}"
+                       Foreground="#B45309"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,8"/>
+
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding Rows}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserReorderColumns="False"
+                      GridLinesVisibility="All"
+                      BorderThickness="1">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="تاريخ" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:PartnerTransactionEntryRowViewModel">
+                                <Grid Margin="4,2">
+                                    <TextBlock Text="{Binding Date}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                    <CalendarDatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                                        DisplayDate="{Binding DisplayDate}"
+                                                        SelectedDateFormat="Custom"
+                                                        CustomDateFormatString="yyyy-MM-dd"
+                                                        IsTodayHighlighted="True"
+                                                        IsVisible="{Binding IsEditing}"
+                                                        HorizontalAlignment="Stretch"
+                                                        MinWidth="130"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="دفع لي أيوب" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:PartnerTransactionEntryRowViewModel">
+                                <Grid Margin="4,2">
+                                    <TextBlock Text="{Binding PaidByAyoub, StringFormat={}{0:0.00} د.م}"
+                                               VerticalAlignment="Center"
+                                               IsVisible="{Binding IsDisplayMode}"/>
+                                    <TextBox Classes="numeric-input"
+                                             behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True"
+                                             Text="{Binding PaidByAyoub, Mode=TwoWay}"
+                                             IsVisible="{Binding IsEditing}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="رجوع لمصطفى" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:PartnerTransactionEntryRowViewModel">
+                                <Grid Margin="4,2">
+                                    <TextBlock Text="{Binding ReturnedToMustafa, StringFormat={}{0:0.00} د.م}"
+                                               VerticalAlignment="Center"
+                                               IsVisible="{Binding IsDisplayMode}"/>
+                                    <TextBox Classes="numeric-input"
+                                             behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True"
+                                             Text="{Binding ReturnedToMustafa, Mode=TwoWay}"
+                                             IsVisible="{Binding IsEditing}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="التفاصيل" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:PartnerTransactionEntryRowViewModel">
+                                <Grid Margin="4,2">
+                                    <TextBlock Text="{Binding Details}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                    <TextBox Text="{Binding Details, Mode=TwoWay}" IsVisible="{Binding IsEditing}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="الباقي لأيوب" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:PartnerTransactionEntryRowViewModel">
+                                <TextBlock Text="{Binding LeftToAyoub, StringFormat={}{0:0.00} د.م}"
+                                           VerticalAlignment="Center"
+                                           Margin="4,2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="الباقي لمصطفى" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:PartnerTransactionEntryRowViewModel">
+                                <TextBlock Text="{Binding LeftToMustafa, StringFormat={}{0:0.00} د.م}"
+                                           VerticalAlignment="Center"
+                                           Margin="4,2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="إجراءات" Width="170">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:PartnerTransactionEntryRowViewModel">
+                                <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                    <Button Classes="edit-action" Content="تعديل"
+                                            Command="{Binding $parent[DataGrid].((vm:PartnerTransactionsViewModel)DataContext).BeginEditRowCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding ShowEditDelete}"
+                                            Padding="8,4"/>
+                                    <Button Classes="delete-action" Content="حذف"
+                                            Command="{Binding $parent[DataGrid].((vm:PartnerTransactionsViewModel)DataContext).DeleteRowCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding ShowEditDelete}"
+                                            Padding="8,4"/>
+                                    <Button Classes="save-action" Content="حفظ"
+                                            Command="{Binding $parent[DataGrid].((vm:PartnerTransactionsViewModel)DataContext).CommitRowCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding ShowSaveCancel}"
+                                            Padding="8,4"/>
+                                    <Button Content="إلغاء"
+                                            Command="{Binding $parent[DataGrid].((vm:PartnerTransactionsViewModel)DataContext).CancelEditRowCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding ShowSaveCancel}"
+                                            Padding="8,4"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
 </UserControl>

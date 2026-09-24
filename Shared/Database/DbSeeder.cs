@@ -45,6 +45,19 @@ public static class DbSeeder
         SeedDemoPurchaseInvoices(db);
         SeedDemoSales(db);
         SeedDemoExpenses(db);
+        SeedDemoPartnerTransactions(db);
+    }
+
+    private static void SeedDemoPartnerTransactions(AppDbContext db)
+    {
+        if (db.PartnerTransactions.Any())
+            return;
+
+        db.PartnerTransactions.AddRange(
+            new PartnerTransaction { Date = "2026-11-05", PaidByAyoub = 3000m, ReturnedToMustafa = 1500m, Details = "تسوية جزئية" },
+            new PartnerTransaction { Date = "2026-11-18", PaidByAyoub = 0m, ReturnedToMustafa = 2000m, Details = "رجوع لمصطفى" },
+            new PartnerTransaction { Date = "2026-11-21", PaidByAyoub = 5000m, ReturnedToMustafa = 0m, Details = "دفع مورد بلاستيك" });
+        db.SaveChanges();
     }
 
     private static void SeedDemoExpenses(AppDbContext db)
