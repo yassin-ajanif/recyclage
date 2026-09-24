@@ -59,6 +59,8 @@
                                 <TextBlock Text="{Binding Date}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
                                 <CalendarDatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
                                                     DisplayDate="{Binding DisplayDate}"
+                                                    DisplayDateStart="{Binding $parent[DataGrid].((vm:SupplierInvoiceReportViewModel)DataContext).SelectedMonthStart}"
+                                                    DisplayDateEnd="{Binding $parent[DataGrid].((vm:SupplierInvoiceReportViewModel)DataContext).SelectedMonthEnd}"
                                                     SelectedDateFormat="Custom"
                                                     CustomDateFormatString="yyyy-MM-dd"
                                                     IsTodayHighlighted="True"

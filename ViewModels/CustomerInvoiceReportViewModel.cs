@@ -138,6 +138,12 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
             return false;
         }
 
+        if (!IsDateInSelectedMonth(row.Date))
+        {
+            StatusMessage = "التاريخ يجب أن يكون في الشهر المحدد.";
+            return false;
+        }
+
         IsBusy = true;
         StatusMessage = null;
         try
@@ -274,12 +280,15 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
         {
             var row = new SaleEntryRowViewModel();
             row.AttachProductNames(SaleProductNames);
+            ApplyMonthDateScope(row);
             row.StartAsNewRow();
             Rows.Add(row);
         }
-        else if (!Rows[^1].IsEditing)
+        else
         {
-            Rows[^1].StartAsNewRow();
+            ApplyMonthDateScope(Rows[^1]);
+            if (!Rows[^1].IsEditing)
+                Rows[^1].StartAsNewRow();
         }
     }
 

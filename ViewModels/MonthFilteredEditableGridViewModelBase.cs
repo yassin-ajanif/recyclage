@@ -17,6 +17,26 @@ public abstract partial class MonthFilteredEditableGridViewModelBase<TRow> : Edi
 
     protected string SelectedMonthPrefix => $"{SelectedYear:D4}-{SelectedMonth:D2}";
 
+    public DateTime SelectedMonthStart => new(SelectedYear, SelectedMonth, 1);
+
+    public DateTime SelectedMonthEnd => SelectedMonthStart.AddMonths(1).AddDays(-1);
+
+    public DateTime SelectedMonthDisplayDate
+    {
+        get
+        {
+            var today = DateTime.Today;
+            return today.Year == SelectedYear && today.Month == SelectedMonth
+                ? today
+                : SelectedMonthStart;
+        }
+    }
+
+    public bool IsDateInSelectedMonth(string? dateText) =>
+        DateTime.TryParse(dateText, out var date) &&
+        date.Year == SelectedYear &&
+        date.Month == SelectedMonth;
+
     [RelayCommand]
     private void SelectMonth(MonthFilterOption month) => SelectedMonth = month.Number;
 
@@ -25,10 +45,20 @@ public abstract partial class MonthFilteredEditableGridViewModelBase<TRow> : Edi
         foreach (var month in Months)
             month.IsSelected = month.Number == value;
 
+        OnPropertyChanged(nameof(SelectedMonthStart));
+        OnPropertyChanged(nameof(SelectedMonthEnd));
+        OnPropertyChanged(nameof(SelectedMonthDisplayDate));
+
         OnMonthFilterChanged();
     }
 
     protected virtual void OnMonthFilterChanged()
     {
+    }
+
+    protected void ApplyMonthDateScope(DatedEditableRowViewModelBase row)
+    {
+        row.SetDefaultDate(SelectedMonthDisplayDate);
+        row.EnsureDateWithinMonth(SelectedYear, SelectedMonth);
     }
 }

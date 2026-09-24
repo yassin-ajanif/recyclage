@@ -83,6 +83,12 @@ public partial class ExpensesViewModel : MonthFilteredEditableGridViewModelBase<
             return false;
         }
 
+        if (!IsDateInSelectedMonth(row.Date))
+        {
+            StatusMessage = "التاريخ يجب أن يكون في الشهر المحدد.";
+            return false;
+        }
+
         IsBusy = true;
         StatusMessage = null;
         try
@@ -177,12 +183,15 @@ public partial class ExpensesViewModel : MonthFilteredEditableGridViewModelBase<
         if (Rows.Count == 0 || !Rows[^1].IsEmpty)
         {
             var row = new ExpenseEntryRowViewModel();
+            ApplyMonthDateScope(row);
             row.StartAsNewRow();
             Rows.Add(row);
         }
-        else if (!Rows[^1].IsEditing)
+        else
         {
-            Rows[^1].StartAsNewRow();
+            ApplyMonthDateScope(Rows[^1]);
+            if (!Rows[^1].IsEditing)
+                Rows[^1].StartAsNewRow();
         }
     }
 
