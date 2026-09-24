@@ -7,7 +7,7 @@
              x:DataType="vm:CustomerInvoiceReportViewModel"
              FlowDirection="RightToLeft">
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="24">
+    <Grid RowDefinitions="Auto,Auto,*" Margin="24">
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,16">
             <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,16,0">
                 <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
@@ -45,7 +45,12 @@
                       IsReadOnly="True"
                       CanUserReorderColumns="False"
                       GridLinesVisibility="All"
-                      BorderThickness="1,1,1,0">
+                      BorderThickness="1,1,1,0"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      MinHeight="200">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="تاريخ" Width="150">
                     <DataGridTemplateColumn.CellTemplate>

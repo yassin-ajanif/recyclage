@@ -35,7 +35,12 @@
                       IsReadOnly="True"
                       CanUserReorderColumns="False"
                       GridLinesVisibility="All"
-                      BorderThickness="1,1,1,0">
+                      BorderThickness="1,1,1,0"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      MinHeight="200">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="تاريخ" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
