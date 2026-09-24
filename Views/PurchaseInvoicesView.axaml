@@ -60,7 +60,10 @@
                     </StackPanel>
                     <StackPanel Grid.Column="8" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="الباقي" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
-                        <TextBlock Text="{Binding TotalRemaining, StringFormat={}{0:0.00} د.م}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalRemaining, StringFormat={}{0:0.00} د.م}"
+                                   Foreground="{Binding TotalRemaining, Converter={StaticResource NegativeAmountBrushConverter}}"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
             </Border>

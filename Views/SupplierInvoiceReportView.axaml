@@ -144,7 +144,10 @@
                 <DataGridTemplateColumn Header="الباقي" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:PurchaseInvoiceEntryRowViewModel">
-                            <TextBlock Text="{Binding Remaining}" Margin="4,6" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Remaining}"
+                                       Foreground="{Binding Remaining, Converter={StaticResource NegativeAmountBrushConverter}}"
+                                       Margin="4,6"
+                                       VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -196,7 +199,10 @@
                     </StackPanel>
                     <StackPanel Grid.Column="7" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="الباقي" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
-                        <TextBlock Text="{Binding TotalRemaining, StringFormat={}{0:0.00} د.م}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalRemaining, StringFormat={}{0:0.00} د.م}"
+                                   Foreground="{Binding TotalRemaining, Converter={StaticResource NegativeAmountBrushConverter}}"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
             </Border>

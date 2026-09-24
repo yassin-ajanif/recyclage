@@ -93,7 +93,10 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding CapitalRemaining}" Margin="8,6" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding CapitalRemaining}"
+                                       Foreground="{Binding CapitalRemaining, Converter={StaticResource NegativeAmountBrushConverter}}"
+                                       Margin="8,6"
+                                       VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
