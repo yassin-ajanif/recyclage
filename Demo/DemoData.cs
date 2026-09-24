@@ -144,7 +144,7 @@ public static class DemoData
             MonthlyPurchases = "7 450,00 د.م",
             Expenses = "5 550,00 د.م",
             TotalIncomePurchases = "13 000,00 د.م",
-            Outgoing = "3 500,00 د.م"
+            MonthlySales = "7 730,00 د.م"
         }
     ];
 }

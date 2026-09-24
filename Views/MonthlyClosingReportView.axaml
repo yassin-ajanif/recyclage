@@ -82,14 +82,14 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Outgoing}" Margin="8,6" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding MonthlySales}" Margin="8,6" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn MinWidth="150" Width="*">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="الباقي في شهر رأس مال" TextWrapping="Wrap" TextAlignment="Center"/>
+                        <TextBlock Text="الباقي" TextWrapping="Wrap" TextAlignment="Center"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -100,7 +100,7 @@
 
                 <DataGridTemplateColumn MinWidth="120" Width="120">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="(+ أو -) شركة" TextWrapping="Wrap" TextAlignment="Center"/>
+                        <TextBlock Text="رأس مال الشركة" TextWrapping="Wrap" TextAlignment="Center"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
