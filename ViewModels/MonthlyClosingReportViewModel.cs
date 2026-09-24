@@ -56,7 +56,24 @@ public partial class MonthlyClosingReportViewModel : MonthFilteredPageViewModelB
 
             var totalPurchasesExpenses = purchases + expenses;
             var monthlyRemaining = sales - totalPurchasesExpenses;
-            var companyCapital = appSettings.CompanyCapital + monthlyRemaining;
+
+            var endOfMonth = new DateTime(SelectedYear, SelectedMonth, DateTime.DaysInMonth(SelectedYear, SelectedMonth))
+                .ToString("yyyy-MM-dd");
+            var cumulativeSales = await db.Sales
+                .AsNoTracking()
+                .Where(s => s.Date.CompareTo(endOfMonth) <= 0)
+                .SumAsync(s => s.Total);
+            var cumulativePurchases = await db.PurchaseInvoices
+                .AsNoTracking()
+                .Where(p => p.Date.CompareTo(endOfMonth) <= 0)
+                .SumAsync(p => p.Total);
+            var cumulativeExpenses = await db.Expenses
+                .AsNoTracking()
+                .Where(e => e.Date.CompareTo(endOfMonth) <= 0)
+                .SumAsync(e => e.Amount);
+
+            var cumulativeRemaining = cumulativeSales - cumulativePurchases - cumulativeExpenses;
+            var companyCapital = appSettings.CompanyCapital + cumulativeRemaining;
 
             Rows.Clear();
             Rows.Add(new MonthlyClosingRow

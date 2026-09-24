@@ -107,7 +107,10 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding CompanyBalance}" Margin="8,6" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding CompanyBalance}"
+                                       Foreground="{Binding CompanyBalance, Converter={StaticResource NegativeAmountBrushConverter}}"
+                                       Margin="8,6"
+                                       VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
