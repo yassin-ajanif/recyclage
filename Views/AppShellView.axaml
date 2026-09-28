@@ -38,12 +38,12 @@
 
                         <Border Classes="nav-submenu" IsVisible="{Binding InvoicesExpanded}">
                             <StackPanel Spacing="2">
-                                <Button Content="فاتورة مورد"
+                                <Button Content="اضافة فاتورة مشتريات"
                                         Command="{Binding GoSupplierReportCommand}"
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Left"
                                         Classes="nav-item"/>
-                                <Button Content="فاتورة زبون"
+                                <Button Content="اضافة فاتورة مبيعات"
                                         Command="{Binding GoCustomerReportCommand}"
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Left"

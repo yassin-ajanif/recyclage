@@ -14,7 +14,7 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
     private Dictionary<string, int> _saleProductIdsByName = [];
 
-    public override string Title => "فاتورة زبون";
+    public override string Title => "اضافة فاتورة مبيعات";
 
     public ObservableCollection<NamedOption> Clients { get; } = [];
     public ObservableCollection<string> SaleProductNames { get; } = [];
