@@ -80,8 +80,13 @@
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Left"
                                         Classes="nav-item"/>
-                                <Button Content="حساب بين الشركاء"
-                                        Command="{Binding GoPartnerTransactionsCommand}"
+                                <Button Content="دفع لي أيوب"
+                                        Command="{Binding GoAyoubPaymentsCommand}"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Classes="nav-item"/>
+                                <Button Content="رجوع لمصطفى"
+                                        Command="{Binding GoMustafaReturnsCommand}"
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Left"
                                         Classes="nav-item"/>

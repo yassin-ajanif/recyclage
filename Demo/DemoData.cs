@@ -105,37 +105,6 @@ public static class DemoData
         new() { Date = "2026-11-12", ExpenseType = "صيانة", Amount = "1 200,00 د.م", Description = "إصلاح الميزان" }
     ];
 
-    public static IReadOnlyList<PartnerTransactionRow> PartnerTransactions { get; } =
-    [
-        new()
-        {
-            Date = "2026-11-21",
-            PaidByAyoub = "5 000,00 د.م",
-            ReturnedToMustafa = "0,00 د.م",
-            Details = "دفع مورد بلاستيك",
-            LeftToAyoub = "12 500,00 د.م",
-            LeftToMustafa = "8 000,00 د.م"
-        },
-        new()
-        {
-            Date = "2026-11-18",
-            PaidByAyoub = "0,00 د.م",
-            ReturnedToMustafa = "2 000,00 د.م",
-            Details = "رجوع لمصطفى",
-            LeftToAyoub = "7 500,00 د.م",
-            LeftToMustafa = "10 000,00 د.م"
-        },
-        new()
-        {
-            Date = "2026-11-05",
-            PaidByAyoub = "3 000,00 د.م",
-            ReturnedToMustafa = "1 500,00 د.م",
-            Details = "تسوية جزئية",
-            LeftToAyoub = "7 500,00 د.م",
-            LeftToMustafa = "8 000,00 د.م"
-        }
-    ];
-
     public static IReadOnlyList<MonthlyClosingRow> MonthlyClosing { get; } =
     [
         new()

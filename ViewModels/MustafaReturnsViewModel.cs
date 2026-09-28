@@ -8,15 +8,15 @@ using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
-public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<PartnerTransactionEntryRowViewModel>
+public partial class MustafaReturnsViewModel : EditableGridViewModelBase<MustafaReturnEntryRowViewModel>
 {
     private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public override string Title => "حساب بين الشركاء";
+    public override string Title => "رجوع لمصطفى";
 
-    public ObservableCollection<PartnerTransactionEntryRowViewModel> Rows { get; } = [];
+    public ObservableCollection<MustafaReturnEntryRowViewModel> Rows { get; } = [];
 
-    protected override ObservableCollection<PartnerTransactionEntryRowViewModel> EditableRows => Rows;
+    protected override ObservableCollection<MustafaReturnEntryRowViewModel> EditableRows => Rows;
 
     [ObservableProperty]
     private bool _isBusy;
@@ -24,7 +24,10 @@ public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<Pa
     [ObservableProperty]
     private string? _statusMessage;
 
-    public PartnerTransactionsViewModel(IDbContextFactory<AppDbContext> dbFactory)
+    [ObservableProperty]
+    private decimal _totalRemaining;
+
+    public MustafaReturnsViewModel(IDbContextFactory<AppDbContext> dbFactory)
     {
         _dbFactory = dbFactory;
         _ = LoadAsync();
@@ -37,23 +40,18 @@ public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<Pa
         StatusMessage = null;
         try
         {
-            await using var db = await _dbFactory.CreateDbContextAsync();
-            var transactions = await db.PartnerTransactions
-                .AsNoTracking()
-                .OrderByDescending(t => t.Date)
-                .ThenByDescending(t => t.Id)
-                .ToListAsync();
+            var returns = await LoadReturnsAsync();
 
             Rows.Clear();
-            foreach (var transaction in transactions)
-                Rows.Add(ToRow(transaction));
+            foreach (var item in returns)
+                Rows.Add(ToRow(item));
 
-            PartnerBalanceCalculator.ApplyRunningBalances(Rows);
+            RecalculateTotal();
             EnsureTrailingEmptyRow();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"تعذر تحميل حساب الشركاء: {ex.Message}";
+            StatusMessage = $"تعذر تحميل رجوع لمصطفى: {ex.Message}";
         }
         finally
         {
@@ -61,7 +59,7 @@ public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<Pa
         }
     }
 
-    public override async Task<bool> SaveRowAsync(PartnerTransactionEntryRowViewModel row)
+    public override async Task<bool> SaveRowAsync(MustafaReturnEntryRowViewModel row)
     {
         if (row.IsEmpty || IsBusy)
             return false;
@@ -80,28 +78,26 @@ public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<Pa
 
             if (row.Id == 0)
             {
-                var entity = new PartnerTransaction
+                var entity = new MustafaReturn
                 {
                     Date = row.Date.Trim(),
-                    PaidByAyoub = row.PaidByAyoub,
-                    ReturnedToMustafa = row.ReturnedToMustafa,
+                    Amount = row.Amount,
                     Details = row.Details.Trim()
                 };
 
-                db.PartnerTransactions.Add(entity);
+                db.MustafaReturns.Add(entity);
                 await db.SaveChangesAsync();
                 row.MarkAsSaved(entity.Id);
                 EnsureTrailingEmptyRow();
             }
             else
             {
-                var entity = await db.PartnerTransactions.FirstOrDefaultAsync(t => t.Id == row.Id);
+                var entity = await db.MustafaReturns.FirstOrDefaultAsync(r => r.Id == row.Id);
                 if (entity is null)
                     return false;
 
                 entity.Date = row.Date.Trim();
-                entity.PaidByAyoub = row.PaidByAyoub;
-                entity.ReturnedToMustafa = row.ReturnedToMustafa;
+                entity.Amount = row.Amount;
                 entity.Details = row.Details.Trim();
                 await db.SaveChangesAsync();
                 row.EndEdit();
@@ -122,12 +118,12 @@ public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<Pa
     }
 
     [RelayCommand]
-    private async Task DeleteRow(PartnerTransactionEntryRowViewModel row)
+    private async Task DeleteRow(MustafaReturnEntryRowViewModel row)
     {
         if (row.Id == 0)
             return;
 
-        if (!await ConfirmDialogService.ConfirmDeleteAsync(row.Details))
+        if (!await ConfirmDialogService.ConfirmDeleteAsync(FormatRowLabel(row)))
             return;
 
         IsBusy = true;
@@ -135,16 +131,16 @@ public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<Pa
         try
         {
             await using var db = await _dbFactory.CreateDbContextAsync();
-            var entity = await db.PartnerTransactions.FirstOrDefaultAsync(t => t.Id == row.Id);
+            var entity = await db.MustafaReturns.FirstOrDefaultAsync(r => r.Id == row.Id);
             if (entity is not null)
             {
-                db.PartnerTransactions.Remove(entity);
+                db.MustafaReturns.Remove(entity);
                 await db.SaveChangesAsync();
             }
 
             Rows.Remove(row);
+            RecalculateTotal();
             EnsureTrailingEmptyRow();
-            PartnerBalanceCalculator.ApplyRunningBalances(Rows);
         }
         catch (Exception ex)
         {
@@ -156,35 +152,43 @@ public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<Pa
         }
     }
 
-    private async Task ReloadAndRecalculateAsync()
+    private async Task<List<MustafaReturn>> LoadReturnsAsync()
     {
         await using var db = await _dbFactory.CreateDbContextAsync();
-        var transactions = await db.PartnerTransactions
+        return await db.MustafaReturns
             .AsNoTracking()
-            .OrderByDescending(t => t.Date)
-            .ThenByDescending(t => t.Id)
+            .OrderByDescending(r => r.Date)
+            .ThenByDescending(r => r.Id)
             .ToListAsync();
+    }
+
+    private async Task ReloadAndRecalculateAsync()
+    {
+        var returns = await LoadReturnsAsync();
 
         var editingNewRow = Rows.Count > 0 && Rows[^1].Id == 0 && Rows[^1].IsEditing;
         var newRow = editingNewRow ? Rows[^1] : null;
 
         Rows.Clear();
-        foreach (var transaction in transactions)
-            Rows.Add(ToRow(transaction));
-
-        PartnerBalanceCalculator.ApplyRunningBalances(Rows);
+        foreach (var item in returns)
+            Rows.Add(ToRow(item));
 
         if (newRow is not null)
             Rows.Add(newRow);
         else
             EnsureTrailingEmptyRow();
+
+        RecalculateTotal();
     }
+
+    private void RecalculateTotal() =>
+        TotalRemaining = Rows.Where(r => r.Id > 0).Sum(r => r.Amount);
 
     private void EnsureTrailingEmptyRow()
     {
         if (Rows.Count == 0 || !Rows[^1].IsEmpty)
         {
-            var row = new PartnerTransactionEntryRowViewModel();
+            var row = new MustafaReturnEntryRowViewModel();
             row.StartAsNewRow();
             Rows.Add(row);
         }
@@ -194,12 +198,14 @@ public partial class PartnerTransactionsViewModel : EditableGridViewModelBase<Pa
         }
     }
 
-    private static PartnerTransactionEntryRowViewModel ToRow(PartnerTransaction transaction) => new()
+    private static string? FormatRowLabel(MustafaReturnEntryRowViewModel row) =>
+        row.Amount > 0 ? $"{row.Date} — {row.Amount:0.00} د.م" : row.Date;
+
+    private static MustafaReturnEntryRowViewModel ToRow(MustafaReturn item) => new()
     {
-        Id = transaction.Id,
-        Date = transaction.Date,
-        PaidByAyoub = transaction.PaidByAyoub,
-        ReturnedToMustafa = transaction.ReturnedToMustafa,
-        Details = transaction.Details
+        Id = item.Id,
+        Date = item.Date,
+        Amount = item.Amount,
+        Details = item.Details
     };
 }

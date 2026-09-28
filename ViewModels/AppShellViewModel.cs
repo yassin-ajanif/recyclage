@@ -56,7 +56,10 @@ public partial class AppShellViewModel : ObservableObject
     private void GoCustomerReport() => Navigate("customer-report", () => _services.GetRequiredService<CustomerInvoiceReportViewModel>());
 
     [RelayCommand]
-    private void GoPartnerTransactions() => Navigate("partners", () => _services.GetRequiredService<PartnerTransactionsViewModel>());
+    private void GoAyoubPayments() => Navigate("ayoub-payments", () => _services.GetRequiredService<AyoubPaymentsViewModel>());
+
+    [RelayCommand]
+    private void GoMustafaReturns() => Navigate("mustafa-returns", () => _services.GetRequiredService<MustafaReturnsViewModel>());
 
     [RelayCommand]
     private void GoProducts() => Navigate("products", () => _services.GetRequiredService<ProductsViewModel>());
@@ -95,7 +98,7 @@ public partial class AppShellViewModel : ObservableObject
         var section = key switch
         {
             "supplier-report" or "customer-report" or "expenses" => "invoices",
-            "purchases" or "sales" or "monthly" or "partners" => "accounts",
+            "purchases" or "sales" or "monthly" or "ayoub-payments" or "mustafa-returns" => "accounts",
             "products" or "suppliers" or "clients" or "capital" => "settings",
             _ => null
         };

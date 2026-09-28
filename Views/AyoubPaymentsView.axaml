@@ -1,0 +1,116 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Recyclage.ViewModels"
+             xmlns:behaviors="using:Recyclage.Behaviors"
+             x:Class="Recyclage.Views.AyoubPaymentsView"
+             x:DataType="vm:AyoubPaymentsViewModel"
+             FlowDirection="RightToLeft">
+
+    <Grid RowDefinitions="Auto,*" Margin="24">
+        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBlock Text="اضغط «تعديل» لتغيير سطر، أو اكتب في السطر الأخير ثم «حفظ»."
+                       Opacity="0.6"
+                       FontSize="13"
+                       HorizontalAlignment="Stretch"
+                       TextAlignment="Right"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" RowDefinitions="Auto,*,Auto">
+            <TextBlock Grid.Row="0"
+                       Text="{Binding StatusMessage}"
+                       Foreground="#B45309"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,8"/>
+
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding Rows}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserReorderColumns="False"
+                      GridLinesVisibility="All"
+                      BorderThickness="1,1,1,0">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="تاريخ" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:AyoubPaymentEntryRowViewModel">
+                                <Grid Margin="4,2">
+                                    <TextBlock Text="{Binding Date}" VerticalAlignment="Center" IsVisible="{Binding IsDisplayMode}"/>
+                                    <CalendarDatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                                        DisplayDate="{Binding DisplayDate}"
+                                                        SelectedDateFormat="Custom"
+                                                        CustomDateFormatString="yyyy-MM-dd"
+                                                        IsTodayHighlighted="True"
+                                                        IsVisible="{Binding IsEditing}"
+                                                        HorizontalAlignment="Stretch"
+                                                        MinWidth="130"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="دفع لي أيوب" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:AyoubPaymentEntryRowViewModel">
+                                <Grid Margin="4,2">
+                                    <TextBlock Text="{Binding Amount, StringFormat={}{0:0.00} د.م}"
+                                               VerticalAlignment="Center"
+                                               IsVisible="{Binding IsDisplayMode}"/>
+                                    <TextBox Classes="numeric-input"
+                                             behaviors:TextBoxFocusBehavior.SelectAllOnFocus="True"
+                                             Text="{Binding Amount, Mode=TwoWay}"
+                                             IsVisible="{Binding IsEditing}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="إجراءات" Width="170">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="vm:AyoubPaymentEntryRowViewModel">
+                                <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                    <Button Classes="edit-action" Content="تعديل"
+                                            Command="{Binding $parent[DataGrid].((vm:AyoubPaymentsViewModel)DataContext).BeginEditRowCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding ShowEditDelete}"
+                                            Padding="8,4"/>
+                                    <Button Classes="delete-action" Content="حذف"
+                                            Command="{Binding $parent[DataGrid].((vm:AyoubPaymentsViewModel)DataContext).DeleteRowCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding ShowEditDelete}"
+                                            Padding="8,4"/>
+                                    <Button Classes="save-action" Content="حفظ"
+                                            Command="{Binding $parent[DataGrid].((vm:AyoubPaymentsViewModel)DataContext).CommitRowCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding ShowSaveCancel}"
+                                            Padding="8,4"/>
+                                    <Button Content="إلغاء"
+                                            Command="{Binding $parent[DataGrid].((vm:AyoubPaymentsViewModel)DataContext).CancelEditRowCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding ShowSaveCancel}"
+                                            Padding="8,4"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Border Grid.Row="2"
+                    Background="#FAF8F5"
+                    BorderBrush="{StaticResource TableGridLineBrush}"
+                    BorderThickness="1,0,1,1"
+                    Padding="0,8">
+                <Grid ColumnDefinitions="150,*,170">
+                    <StackPanel Grid.Column="1" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="الباقي لأيوب" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalRemaining, StringFormat={}{0:0.00} د.م}"
+                                   Foreground="{Binding TotalRemaining, Converter={StaticResource NegativeAmountBrushConverter}}"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

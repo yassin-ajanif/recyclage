@@ -18,24 +18,25 @@ Design document based on the handwritten ledger tables (فاتورة المشت�
 | `Suppliers` | الموردون | Name, Phone, ICE |
 | `Products` | المنتجات | Name + type (`ForBuying` / `ForSale`) |
 
-### Daily entry — user types rows (4 tables)
+### Daily entry — user types rows (5 tables)
 
 | Table | Arabic |
 |-------|--------|
 | `PurchaseInvoices` | فاتورة المشتريات |
 | `Sales` | مبيعات |
 | `Expenses` | **فاتورة المصاريف** |
-| `PartnerTransactions` | حساب بين شريكي (أيوب / مصطفى — hardcoded) |
+| `AyoubPayments` | دفع لي أيوب (حساب الشركاء — أيوب) |
+| `MustafaReturns` | رجوع لمصطفى (حساب الشركاء — مصطفى) |
 
 ### Reports — system computes (3 views)
 
 | View | Arabic | Source |
 |------|--------|--------|
-| `MonthlyClosingReport` | حساب في آخر شهر | `Sales` + `PurchaseInvoices` + `Expenses` + `PartnerTransactions` by month |
+| `MonthlyClosingReport` | حساب في آخر شهر | `Sales` + `PurchaseInvoices` + `Expenses` + `AyoubPayments` + `MustafaReturns` by month |
 | `SupplierInvoiceReport` | فاتورة الفرنيسور | `PurchaseInvoices` by `SupplierId` |
 | `CustomerInvoiceReport` | فاتورة زبون | `Sales` by `ClientId` |
 
-**Total physical tables: 7** (3 setup + 4 entry)  
+**Total physical tables: 8** (3 setup + 5 entry)  
 **Total views: 3**
 
 Product type on **`Products` only:** `CHECK (ProductType IN ('ForBuying', 'ForSale'))`. No separate expense-types table.
@@ -49,13 +50,14 @@ Product type on **`Products` only:** `CHECK (ProductType IN ('ForBuying', 'ForSa
                                  │
          ┌───────────────────────┼───────────────────────┐
          │                       │                       │
-   STORED (7 tables)        USER TYPES DAILY        COMPUTED (3 views)
+   STORED (8 tables)        USER TYPES DAILY        COMPUTED (3 views)
          │                       │                       │
   Clients ──────────────► Sales ──┼──► CustomerInvoiceReport
   Suppliers ────► PurchaseInvoices ──► SupplierInvoiceReport
   Products ─────────────► (both)  │
                                   ├── Expenses  ← فاتورة المصاريف
-                                  ├── PartnerTransactions
+                                  ├── AyoubPayments   ← دفع لي أيوب
+                                  ├── MustafaReturns  ← رجوع لمصطفى
                                   └──► MonthlyClosingReport
 ```
 
@@ -113,13 +115,16 @@ erDiagram
         decimal Amount
     }
 
-    PartnerTransactions {
+    AyoubPayments {
         int Id PK
         text Date
-        decimal PaidByAyoub
-        decimal ReturnedToMustafa
-        decimal LeftToAyoub
-        decimal LeftToMustafa
+        decimal Amount
+    }
+
+    MustafaReturns {
+        int Id PK
+        text Date
+        decimal Amount
     }
 ```
 
@@ -166,16 +171,25 @@ No FK — user types expense type as text on each row. No `ExpenseTypes` lookup 
 └─────────────────┘   └─────────────────┘
 
 ┌────────────────────────────┐   ┌────────────────────────────┐
-│         Expenses           │   │    PartnerTransactions     │
-│    (فاتورة المصاريف)       │   │  (Ayoub / Mustafa fixed)   │
+│         Expenses           │   │        AyoubPayments       │
+│    (فاتورة المصاريف)       │   │       (دفع لي أيوب)        │
 ├────────────────────────────┤   ├────────────────────────────┤
-│ Id                      PK │   │ Id, Date                   │
-│ Date          ← تاريخ      │   │ PaidByAyoub                │
-│ ExpenseType   ← نوع المصاريف│   │ ReturnedToMustafa          │
-│ Amount        ← الواجب     │   │ Details                    │
-│ Description                │   │ LeftToAyoub, LeftToMustafa │
-│ CreatedAt                  │   │ CreatedAt                  │
-└────────────────────────────┘   └────────────────────────────┘
+│ Id                      PK │   │ Id                      PK │
+│ Date          ← تاريخ      │   │ Date          ← تاريخ      │
+│ ExpenseType   ← نوع المصاريف│   │ Amount        ← المبلغ     │
+│ Amount        ← الواجب     │   │ Details       ← التفاصيل   │
+│ Description                │   │ CreatedAt                  │
+│ CreatedAt                  │   └────────────────────────────┘
+└────────────────────────────┘   ┌────────────────────────────┐
+                                 │       MustafaReturns       │
+                                 │      (رجوع لمصطفى)         │
+                                 ├────────────────────────────┤
+                                 │ Id                      PK │
+                                 │ Date          ← تاريخ      │
+                                 │ Amount        ← المبلغ     │
+                                 │ Details       ← التفاصيل   │
+                                 │ CreatedAt                  │
+                                 └────────────────────────────┘
 ```
 
 ---
@@ -257,16 +271,31 @@ No FK — user types expense type as text on each row. No `ExpenseTypes` lookup 
 
 **Index:** `Date`, `ExpenseType`
 
-### `PartnerTransactions` — حساب بين شريكي
+### `AyoubPayments` — دفع لي أيوب
 
-| Column | Arabic | Type |
-|--------|--------|------|
-| `Date` | تاريخ | TEXT |
-| `PaidByAyoub` | دفع لي أيوب | DECIMAL(18,2) |
-| `ReturnedToMustafa` | رجوع لمصطفى | DECIMAL(18,2) |
-| `Details` | التفاصيل | TEXT |
-| `LeftToAyoub` | الباقي ل أيوب | DECIMAL(18,2) |
-| `LeftToMustafa` | الباقي ل مصطفى | DECIMAL(18,2) |
+| Column | Arabic | Type | Notes |
+|--------|--------|------|-------|
+| `Id` | — | INTEGER | PK |
+| `Date` | تاريخ | TEXT | NOT NULL |
+| `Amount` | دفع لي أيوب | DECIMAL(18,2) | NOT NULL |
+| `Details` | التفاصيل | TEXT | NOT NULL — kept for existing data, not shown on the page |
+| `CreatedAt` | — | TEXT | Audit |
+
+**Index:** `Date`
+
+### `MustafaReturns` — رجوع لمصطفى
+
+| Column | Arabic | Type | Notes |
+|--------|--------|------|-------|
+| `Id` | — | INTEGER | PK |
+| `Date` | تاريخ | TEXT | NOT NULL |
+| `Amount` | رجوع لمصطفى | DECIMAL(18,2) | NOT NULL |
+| `Details` | التفاصيل | TEXT | NOT NULL — kept for existing data, not shown on the page |
+| `CreatedAt` | — | TEXT | Audit |
+
+**Index:** `Date`
+
+Each ledger is independent: «الباقي» is computed in the app as the running total of that table's `Amount`, and is never stored.
 
 ---
 
@@ -279,7 +308,7 @@ No FK — user types expense type as text on each row. No `ExpenseTypes` lookup 
 | `Income` | دخول في شهر | `SUM(Sales.Total)` |
 | `Expenses` | مصاريف في شهر | `SUM(Expenses.Amount)` |
 | `Purchases` | مشتريات في شهر | `SUM(PurchaseInvoices.Total)` |
-| `Outgoing` | خروج في شهر | `SUM(PartnerTransactions.ReturnedToMustafa)` |
+| `Outgoing` | خروج في شهر | `SUM(MustafaReturns.Amount)` |
 
 ### `SupplierInvoiceReport` / `CustomerInvoiceReport`
 
@@ -294,7 +323,8 @@ Unchanged — filtered views on `PurchaseInvoices` / `Sales`.
 | فاتورة المشتريات | `PurchaseInvoices` |
 | مبيعات | `Sales` |
 | **فاتورة المصاريف** | **`Expenses`** |
-| حساب بين شريكي | `PartnerTransactions` |
+| حساب بين شريكي (أيوب) | `AyoubPayments` |
+| حساب بين شريكي (مصطفى) | `MustafaReturns` |
 | حساب آخر شهر | `MonthlyClosingReport` (view) |
 | فاتورة الفرنيسور | `SupplierInvoiceReport` (view) |
 | فاتورة زبون | `CustomerInvoiceReport` (view) |
@@ -305,4 +335,5 @@ Unchanged — filtered views on `PurchaseInvoices` / `Sales`.
 
 | Date | Change |
 |------|--------|
+| 2026-09-28 | **Split `PartnerTransactions` into two independent tables**: `AyoubPayments` (دفع لي أيوب) and `MustafaReturns` (رجوع لمصطفى) — one table per partner ledger page. Existing rows were copied by SQL inside the migration, then the combined table was dropped. Money moved: 57000.00 → `AyoubPayments`, 2000.00 → `MustafaReturns`. 8 stored tables, 3 views. |
 | 2026-09-23 | **Restored `Expenses` table** for فاتورة المصاريف (Date, ExpenseType, Amount). 7 stored tables, 3 views. |

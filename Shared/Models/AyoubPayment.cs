@@ -1,9 +1,8 @@
 namespace Recyclage.Shared.Models;
 
-public class PartnerTransaction : BaseEntity
+public class AyoubPayment : BaseEntity
 {
     public string Date { get; set; } = string.Empty;
-    public decimal PaidByAyoub { get; set; }
-    public decimal ReturnedToMustafa { get; set; }
+    public decimal Amount { get; set; }
     public string Details { get; set; } = string.Empty;
 }
