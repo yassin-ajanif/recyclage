@@ -25,6 +25,12 @@ public partial class MonthlyClosingReportViewModel : MonthFilteredPageViewModelB
     [ObservableProperty]
     private decimal _mustafaReturnsTotal;
 
+    [ObservableProperty]
+    private decimal _remainingToPartnerAmount;
+
+    [ObservableProperty]
+    private string _remainingToPartnerLabel = "";
+
     public MonthlyClosingReportViewModel(
         IDbContextFactory<AppDbContext> dbFactory,
         IAppSettingsService settings)
@@ -91,6 +97,10 @@ public partial class MonthlyClosingReportViewModel : MonthFilteredPageViewModelB
 
             AyoubPaymentsTotal = ayoubPaymentsTotal;
             MustafaReturnsTotal = mustafaReturnsTotal;
+
+            var partnerDifference = ayoubPaymentsTotal - mustafaReturnsTotal;
+            RemainingToPartnerLabel = partnerDifference >= 0 ? "الباقي لأيوب" : "الباقي لمصطفى";
+            RemainingToPartnerAmount = Math.Abs(partnerDifference);
 
             Rows.Clear();
             Rows.Add(new MonthlyClosingRow

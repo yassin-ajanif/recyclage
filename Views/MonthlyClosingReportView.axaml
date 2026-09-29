@@ -122,7 +122,7 @@
                 BorderBrush="{StaticResource TableGridLineBrush}"
                 BorderThickness="1,0,1,1"
                 Padding="0,8">
-            <Grid ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="*,*,*">
                 <StackPanel Grid.Column="0" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="دفع لي أيوب" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
                     <TextBlock Text="{Binding AyoubPaymentsTotal, StringFormat={}{0:0.00} د.م}"
@@ -134,6 +134,13 @@
                     <TextBlock Text="رجوع لمصطفى" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
                     <TextBlock Text="{Binding MustafaReturnsTotal, StringFormat={}{0:0.00} د.م}"
                                Foreground="{Binding MustafaReturnsTotal, Converter={StaticResource NegativeAmountBrushConverter}}"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding RemainingToPartnerLabel}" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding RemainingToPartnerAmount, StringFormat={}{0:0.00} د.م}"
+                               Foreground="{Binding RemainingToPartnerAmount, Converter={StaticResource NegativeAmountBrushConverter}}"
                                FontWeight="SemiBold"
                                HorizontalAlignment="Center"/>
                 </StackPanel>

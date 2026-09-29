@@ -316,6 +316,14 @@ Computed in `MonthlyClosingReportViewModel` for the selected month (kept as the 
 | `CapitalRemaining` | الباقي | month sales − (month purchases + month expenses) |
 | `CompanyBalance` | رأس مال الشركة | `AppSettings.CompanyCapital` + cumulative (sales − purchases − expenses) up to the end of the selected month |
 
+Summary strip below the table (not a table column):
+
+| Field | Arabic | Computed from |
+|-------|--------|---------------|
+| `AyoubPaymentsTotal` | دفع لي أيوب | `SUM(AyoubPayments.Amount)` — same number as the total on the «دفع لي أيوب» page |
+| `MustafaReturnsTotal` | رجوع لمصطفى | `SUM(MustafaReturns.Amount)` — same number as the total on the «رجوع لمصطفى» page |
+| `RemainingToPartner` | الباقي لأيوب / الباقي لمصطفى | `ABS(SUM(AyoubPayments.Amount) − SUM(MustafaReturns.Amount))` (bigger total − smaller), labelled with the partner holding the bigger total |
+
 ### `SupplierInvoiceReport` / `CustomerInvoiceReport`
 
 Unchanged — filtered views on `PurchaseInvoices` / `Sales`.
