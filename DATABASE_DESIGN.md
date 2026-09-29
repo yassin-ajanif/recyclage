@@ -303,12 +303,18 @@ Each ledger is independent: «الباقي» is computed in the app as the runni
 
 ### `MonthlyClosingReport` — حساب في آخر شهر
 
+Computed in `MonthlyClosingReportViewModel` for the selected month (kept as the `MonthlyClosingReport` logical view for the notebook layout).
+
 | Column | Arabic | Computed from |
 |--------|--------|---------------|
-| `Income` | دخول في شهر | `SUM(Sales.Total)` |
-| `Expenses` | مصاريف في شهر | `SUM(Expenses.Amount)` |
-| `Purchases` | مشتريات في شهر | `SUM(PurchaseInvoices.Total)` |
-| `Outgoing` | خروج في شهر | `SUM(MustafaReturns.Amount)` |
+| `MonthlyPurchases` | دخول في شهر | `SUM(PurchaseInvoices.Total)` of the selected month |
+| `Expenses` | المصاريف في شهر | `SUM(Expenses.Amount)` of the selected month |
+| `TotalIncomePurchases` | المجموعة (د+م) | month purchases + month expenses |
+| `MonthlySales` | خروج في شهر | `SUM(Sales.Total)` of the selected month |
+| `AyoubPayments` | دفع لي أيوب | `SUM(AyoubPayments.Amount)` over **all** rows — same number as the «دفع لي أيوب» page total |
+| `MustafaReturns` | رجوع لمصطفى | `SUM(MustafaReturns.Amount)` over **all** rows — same number as the «رجوع لمصطفى» page total |
+| `CapitalRemaining` | الباقي | month sales − (month purchases + month expenses) |
+| `CompanyBalance` | رأس مال الشركة | `AppSettings.CompanyCapital` + cumulative (sales − purchases − expenses) up to the end of the selected month |
 
 ### `SupplierInvoiceReport` / `CustomerInvoiceReport`
 

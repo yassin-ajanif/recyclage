@@ -19,6 +19,12 @@ public partial class MonthlyClosingReportViewModel : MonthFilteredPageViewModelB
     [ObservableProperty]
     private string? _statusMessage;
 
+    [ObservableProperty]
+    private decimal _ayoubPaymentsTotal;
+
+    [ObservableProperty]
+    private decimal _mustafaReturnsTotal;
+
     public MonthlyClosingReportViewModel(
         IDbContextFactory<AppDbContext> dbFactory,
         IAppSettingsService settings)
@@ -72,8 +78,19 @@ public partial class MonthlyClosingReportViewModel : MonthFilteredPageViewModelB
                 .Where(e => e.Date.CompareTo(endOfMonth) <= 0)
                 .SumAsync(e => e.Amount);
 
+            var ayoubPaymentsTotal = await db.AyoubPayments
+                .AsNoTracking()
+                .SumAsync(p => p.Amount);
+
+            var mustafaReturnsTotal = await db.MustafaReturns
+                .AsNoTracking()
+                .SumAsync(r => r.Amount);
+
             var cumulativeRemaining = cumulativeSales - cumulativePurchases - cumulativeExpenses;
             var companyCapital = appSettings.CompanyCapital + cumulativeRemaining;
+
+            AyoubPaymentsTotal = ayoubPaymentsTotal;
+            MustafaReturnsTotal = mustafaReturnsTotal;
 
             Rows.Clear();
             Rows.Add(new MonthlyClosingRow
