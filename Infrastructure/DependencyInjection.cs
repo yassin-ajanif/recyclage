@@ -13,6 +13,9 @@ public static class DependencyInjection
         var connectionString = DatabasePath.GetConnectionString();
         services.AddDbContextFactory<AppDbContext>(options => options.UseSqlite(connectionString));
 
+        services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IAppUpdateService, AppUpdateService>();
+
         services.AddSingleton<IAppSettingsService, AppSettingsService>();
         services.AddSingleton<IBackupService, BackupService>();
         services.AddSingleton<IPeriodicBackupService, PeriodicBackupService>();

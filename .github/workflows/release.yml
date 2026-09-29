@@ -1,0 +1,61 @@
+name: Deploy to GitHub Releases
+
+# Publishing is driven by the <Version> in Recyclage.csproj: change it, push to
+# main, and this workflow builds the installer and publishes it as a GitHub
+# release tagged v<version>. Existing tags are skipped, so re-running is safe.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy-to-github-releases:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Version from Project File
+        id: get-version
+        shell: bash
+        run: echo "version=$(grep -oE '<Version>[^<]+' Recyclage.csproj | head -1 | sed 's/<Version>//')" >> $GITHUB_OUTPUT
+
+      - name: Skip if this version is already released
+        shell: bash
+        run: |
+          version="${{ steps.get-version.outputs.version }}"
+          if git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null 2>&1; then
+            echo "Release v$version already exists - nothing to do."
+            echo "released=true" >> $GITHUB_OUTPUT
+          else
+            echo "version=$version" >> $GITHUB_OUTPUT
+          fi
+        id: check
+
+      - name: Install .NET
+        if: steps.check.outputs.released != 'true'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      # Velopack builds a delta against the currently released version, so it
+      # needs the existing release files before packing.
+      - name: Download Existing Release
+        if: steps.check.outputs.released != 'true'
+        run: |
+          dotnet tool install -g vpk
+          vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Application
+        if: steps.check.outputs.released != 'true'
+        run: dotnet publish Recyclage.csproj -c Release -o publish -r win-x64 --self-contained true
+
+      - name: Create Velopack Release
+        if: steps.check.outputs.released != 'true'
+        run: |
+          vpk pack -u Sonlighting.Recyclage -v ${{ steps.get-version.outputs.version }} -p publish -e Recyclage.exe -i Assets/recyclage.ico
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }} --publish --releaseName "Recyclage ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }}

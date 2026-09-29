@@ -5,10 +5,30 @@
         x:Class="Recyclage.MainWindow"
         x:DataType="vm:AppShellViewModel"
         Title="{Binding AppTitle}"
+        Icon="/Assets/recyclage.ico"
         Width="1200"
         Height="760"
         MinWidth="960"
         MinHeight="560">
 
-    <views:AppShellView DataContext="{Binding}"/>
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Update banner: only visible when a newer build exists on GitHub Releases. -->
+        <Button Grid.Row="0"
+                IsVisible="{Binding IsUpdateBannerVisible}"
+                Content="{Binding UpdateBannerText}"
+                Command="{Binding ApplyUpdateCommand}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Margin="0,0,0,4"
+                Padding="12,8"
+                Background="#16A34A"
+                Foreground="White"
+                BorderThickness="0"
+                CornerRadius="6"
+                FontWeight="SemiBold"
+                Cursor="Hand"/>
+
+        <views:AppShellView Grid.Row="1" DataContext="{Binding}"/>
+    </Grid>
 </Window>

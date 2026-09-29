@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Recyclage.Views.PromptDialog"
+        Width="440"
+        SizeToContent="Height"
+        MinHeight="160"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        FlowDirection="RightToLeft">
+
+    <Border Padding="24" Background="White">
+        <StackPanel Spacing="20">
+            <TextBlock x:Name="MessageText"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       HorizontalAlignment="Stretch"
+                       TextAlignment="Right"/>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Spacing="8">
+                <Button x:Name="ConfirmButton"
+                        Content="نعم"
+                        MinWidth="100"
+                        Padding="16,8"
+                        IsVisible="False"
+                        Click="OnConfirmClick"/>
+                <Button x:Name="DismissButton"
+                        Content="حسنًا"
+                        MinWidth="100"
+                        Padding="16,8"
+                        Click="OnDismissClick"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

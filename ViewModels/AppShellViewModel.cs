@@ -1,31 +1,24 @@
-using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Recyclage.Shared.Services;
 
 namespace Recyclage.ViewModels;
 
 public partial class AppShellViewModel : ObservableObject
 {
-    private static readonly string AppVersionText = ResolveVersion();
+    private readonly IAppUpdateService _updates;
 
-    /// <summary>Window title, carrying the version from the assembly so it never drifts.</summary>
-    public string AppTitle => $"Recyclage — إعادة التدوير v{AppVersionText}";
+    /// <summary>Window title, carrying the version so it never drifts from the build.</summary>
+    public string AppTitle => $"Recyclage — إعادة التدوير v{_updates.DisplayVersion}";
 
-    private static string ResolveVersion()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
+    /// <summary>True once a newer build exists on the release feed.</summary>
+    public bool IsUpdateBannerVisible => _updates.IsUpdateAvailable;
 
-        var informational = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-        if (!string.IsNullOrWhiteSpace(informational))
-        {
-            // The SDK can append "+<commit>" metadata; the title wants just the number.
-            var plus = informational.IndexOf('+');
-            return plus < 0 ? informational : informational[..plus];
-        }
+    public string UpdateBannerText { get; private set; } = string.Empty;
 
-        return assembly.GetName().Version?.ToString(3) ?? "0.0.0";
-    }
+    [RelayCommand]
+    private async Task ApplyUpdateAsync() => await _updates.DownloadAndApplyUpdateAsync();
 
     private readonly IServiceProvider _services;
     [ObservableProperty]
@@ -43,10 +36,34 @@ public partial class AppShellViewModel : ObservableObject
     [ObservableProperty]
     private string? _activePageKey;
 
-    public AppShellViewModel(IServiceProvider services)
+    public AppShellViewModel(IServiceProvider services, IAppUpdateService updates)
     {
         _services = services;
+        _updates = updates;
+        _updates.UpdateStateChanged += (_, _) => RefreshUpdateBanner();
+        RefreshUpdateBanner();
         GoSupplierReport();
+
+        _ = _updates.CheckForUpdatesAsync();
+    }
+
+    private void RefreshUpdateBanner()
+    {
+        if (!_updates.IsUpdateAvailable)
+        {
+            UpdateBannerText = string.Empty;
+            OnPropertyChanged(nameof(IsUpdateBannerVisible));
+            OnPropertyChanged(nameof(UpdateBannerText));
+            return;
+        }
+
+        var version = _updates.AvailableVersion ?? string.Empty;
+        UpdateBannerText = _updates.IsUpdateDownloaded
+            ? $"النسخة {version} جاهزة — اضغط للتثبيت وإعادة التشغيل"
+            : $"تتوفر نسخة جديدة ({version}) — اضغط للتثبيت";
+
+        OnPropertyChanged(nameof(IsUpdateBannerVisible));
+        OnPropertyChanged(nameof(UpdateBannerText));
     }
 
     [RelayCommand]
