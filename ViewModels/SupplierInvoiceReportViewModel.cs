@@ -126,6 +126,12 @@ public partial class SupplierInvoiceReportViewModel : MonthFilteredEditableGridV
         if (row.IsEmpty || SelectedSupplier is null || IsBusy)
             return false;
 
+        if (row.Paid < 0)
+        {
+            StatusMessage = "قيمة الدفع لا يمكن أن تكون سالبة.";
+            return false;
+        }
+
         if (!TryResolveProduct(row, out var productId))
             return false;
 

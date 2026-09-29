@@ -282,6 +282,11 @@ A cash-only line is rejected on save when `Paid = 0`; a product line is still re
 `Quantity ≤ 0`. Such a line is labelled «مبلغ نقدي» everywhere a product name is shown, and
 it never appears in the product picker.
 
+**Sign rule:** `Paid` is hand-entered and is rejected when negative on both tables
+(«قيمة الدفع لا يمكن أن تكون سالبة.») — a rejected save writes nothing and leaves an
+already-saved row untouched. `Paid = 0` stays legal on a product line. `Remaining` is
+computed rather than entered, so it is the field that legitimately carries negative values.
+
 In the entry grids, a line with no product disables «الكمية», «ثمن» and «نقل» — none of them
 contribute to a cash-only line — leaving «دفع» as the only amount box. The three boxes bind
 `IsEnabled` to `HasProduct`, which raises change notifications whenever the product is picked

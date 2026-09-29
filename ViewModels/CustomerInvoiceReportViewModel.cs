@@ -126,6 +126,12 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
         if (row.IsEmpty || SelectedClient is null || IsBusy)
             return false;
 
+        if (row.Paid < 0)
+        {
+            StatusMessage = "قيمة الدفع لا يمكن أن تكون سالبة.";
+            return false;
+        }
+
         if (!TryResolveProduct(row, out var productId))
             return false;
 
