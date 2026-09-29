@@ -4,7 +4,7 @@
         xmlns:vm="using:Recyclage.ViewModels"
         x:Class="Recyclage.MainWindow"
         x:DataType="vm:AppShellViewModel"
-        Title="Recyclage — إعادة التدوير"
+        Title="{Binding AppTitle}"
         Width="1200"
         Height="760"
         MinWidth="960"

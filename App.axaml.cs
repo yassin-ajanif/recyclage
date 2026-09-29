@@ -30,7 +30,6 @@ public partial class App : Application
             using (var db = Services.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext())
             {
                 db.Database.Migrate();
-                DbSeeder.Seed(db);
             }
 
             Services.GetRequiredService<IPeriodicBackupService>().Start();

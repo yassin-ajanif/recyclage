@@ -1,3 +1,4 @@
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,26 @@ namespace Recyclage.ViewModels;
 
 public partial class AppShellViewModel : ObservableObject
 {
+    private static readonly string AppVersionText = ResolveVersion();
+
+    /// <summary>Window title, carrying the version from the assembly so it never drifts.</summary>
+    public string AppTitle => $"Recyclage — إعادة التدوير v{AppVersionText}";
+
+    private static string ResolveVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+
+        var informational = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        if (!string.IsNullOrWhiteSpace(informational))
+        {
+            // The SDK can append "+<commit>" metadata; the title wants just the number.
+            var plus = informational.IndexOf('+');
+            return plus < 0 ? informational : informational[..plus];
+        }
+
+        return assembly.GetName().Version?.ToString(3) ?? "0.0.0";
+    }
+
     private readonly IServiceProvider _services;
     [ObservableProperty]
     private PageViewModelBase? _currentPage;
