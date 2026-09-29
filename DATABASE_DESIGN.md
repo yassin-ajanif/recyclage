@@ -69,8 +69,8 @@ Product type on **`Products` only:** `CHECK (ProductType IN ('ForBuying', 'ForSa
 erDiagram
     Suppliers ||--o{ PurchaseInvoices : SupplierId
     Clients ||--o{ Sales : ClientId
-    Products ||--o{ PurchaseInvoices : ForBuying
-    Products ||--o{ Sales : ForSale
+    Products |o--o{ PurchaseInvoices : ForBuying
+    Products |o--o{ Sales : ForSale
 
     Clients {
         int Id PK
@@ -96,7 +96,7 @@ erDiagram
         int Id PK
         text Date
         int SupplierId FK
-        int ProductId FK
+        int ProductId FK NULL
         decimal Total
     }
 
@@ -104,7 +104,7 @@ erDiagram
         int Id PK
         text Date
         int ClientId FK
-        int ProductId FK
+        int ProductId FK NULL
         decimal Total
     }
 
@@ -236,7 +236,7 @@ No FK — user types expense type as text on each row. No `ExpenseTypes` lookup 
 |--------|--------|------|
 | `Date` | تاريخ | TEXT |
 | `Quantity` | الكمية | DECIMAL(18,3) |
-| `ProductId` | منتج | INTEGER FK → `Products` (**ForBuying**) |
+| `ProductId` | منتج | INTEGER **NULL** FK → `Products` (**ForBuying**) |
 | `SupplierId` | مورد | INTEGER FK → `Suppliers` |
 | `UnitPrice` | ثمن | DECIMAL(18,2) |
 | `TransportCost` | نقل | DECIMAL(18,2) |
@@ -250,13 +250,43 @@ No FK — user types expense type as text on each row. No `ExpenseTypes` lookup 
 |--------|--------|------|
 | `Date` | تاريخ | TEXT |
 | `Quantity` | الكمية | DECIMAL(18,3) |
-| `ProductId` | منتج | INTEGER FK → `Products` (**ForSale**) |
+| `ProductId` | منتج | INTEGER **NULL** FK → `Products` (**ForSale**) |
 | `ClientId` | زبون | INTEGER FK → `Clients` |
 | `UnitPrice` | ثمن | DECIMAL(18,2) |
 | `TransportCost` | نقل | DECIMAL(18,2) |
 | `Total` | المجموع ب DH | DECIMAL(18,2) |
 | `Paid` | دفع | DECIMAL(18,2) |
 | `Remaining` | الباقي | DECIMAL(18,2) |
+
+#### Cash-only lines (مبلغ نقدي)
+
+`ProductId` is **nullable** in both tables, so a line can record money handed over with no
+product — paid to a supplier, or received from a client. In the UI the user leaves «منتج»
+empty and types the amount in «دفع».
+
+| Case | `ProductId` | `Total` | `Remaining` |
+|------|-------------|---------|-------------|
+| Product line | product id | `Quantity × UnitPrice + TransportCost` | `Total − Paid` |
+| Cash-only line | `NULL` | `0` | `−Paid` |
+
+Because a cash-only line has no invoice value of its own, its `Total` is zero and the
+handed amount appears on `Remaining` as a negative balance — hand over 100 and the row
+reads `Total 0`, `Remaining −100`, which the `NegativeAmountBrushConverter` paints red.
+This keeps handed money out of the goods value while still carrying it in the balance.
+
+**Consequence for `MonthlyClosingReport`:** it sums `Total`, so a cash-only line adds
+nothing to `MonthlyPurchases` / `MonthlySales`. A cash-only line is a balance movement, not
+a purchase or a sale.
+
+A cash-only line is rejected on save when `Paid = 0`; a product line is still rejected when
+`Quantity ≤ 0`. Such a line is labelled «مبلغ نقدي» everywhere a product name is shown, and
+it never appears in the product picker.
+
+In the entry grids, a line with no product disables «الكمية», «ثمن» and «نقل» — none of them
+contribute to a cash-only line — leaving «دفع» as the only amount box. The three boxes bind
+`IsEnabled` to `HasProduct`, which raises change notifications whenever the product is picked
+or cleared. Any values left in them are kept, so a line toggled back to a product is restored
+intact.
 
 ### `Expenses` — فاتورة المصاريف
 
@@ -349,5 +379,6 @@ Unchanged — filtered views on `PurchaseInvoices` / `Sales`.
 
 | Date | Change |
 |------|--------|
+| 2026-09-29 | **Made `ProductId` nullable in `PurchaseInvoices` and `Sales`** so a line can record money handed over with no product. The amount is typed in «دفع»; such a line stores `Total = 0` and `Remaining = −Paid`, so a handed amount reads as a negative balance rather than as a purchase or a sale. Cash-only lines are labelled «مبلغ نقدي». Migration `AllowCashOnlyInvoiceLines`. |
 | 2026-09-28 | **Split `PartnerTransactions` into two independent tables**: `AyoubPayments` (دفع لي أيوب) and `MustafaReturns` (رجوع لمصطفى) — one table per partner ledger page. Existing rows were copied by SQL inside the migration, then the combined table was dropped. Money moved: 57000.00 → `AyoubPayments`, 2000.00 → `MustafaReturns`. 8 stored tables, 3 views. |
 | 2026-09-23 | **Restored `Expenses` table** for فاتورة المصاريف (Date, ExpenseType, Amount). 7 stored tables, 3 views. |

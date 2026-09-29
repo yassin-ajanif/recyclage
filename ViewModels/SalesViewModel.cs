@@ -83,7 +83,7 @@ public partial class SalesViewModel : MonthFilteredPageViewModelBase
                 {
                     Date = sale.Date,
                     Quantity = sale.Quantity,
-                    Product = sale.Product.Name,
+                    Product = InvoiceLineLabels.ProductOrFallback(sale.Product?.Name),
                     Client = sale.Client.Name,
                     UnitPrice = sale.UnitPrice.ToString("N2"),
                     TransportCost = sale.TransportCost.ToString("N2"),

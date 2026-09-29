@@ -51,7 +51,8 @@ public class AppDbContext : DbContext
             e.Property(p => p.Total).HasPrecision(18, 2);
             e.Property(p => p.Paid).HasPrecision(18, 2);
             e.Property(p => p.Remaining).HasPrecision(18, 2);
-            e.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
+            // Product is optional: a line can be a cash amount handed over with no product.
+            e.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(p => p.Supplier).WithMany().HasForeignKey(p => p.SupplierId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(p => p.SupplierId);
             e.HasIndex(p => p.Date);
@@ -66,7 +67,8 @@ public class AppDbContext : DbContext
             e.Property(s => s.Total).HasPrecision(18, 2);
             e.Property(s => s.Paid).HasPrecision(18, 2);
             e.Property(s => s.Remaining).HasPrecision(18, 2);
-            e.HasOne(s => s.Product).WithMany().HasForeignKey(s => s.ProductId).OnDelete(DeleteBehavior.Restrict);
+            // Product is optional: a line can be a cash amount handed over with no product.
+            e.HasOne(s => s.Product).WithMany().HasForeignKey(s => s.ProductId).IsRequired(false).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(s => s.Client).WithMany().HasForeignKey(s => s.ClientId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(s => s.ClientId);
             e.HasIndex(s => s.Date);

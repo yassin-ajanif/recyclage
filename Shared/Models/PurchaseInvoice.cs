@@ -4,8 +4,11 @@ public class PurchaseInvoice : BaseEntity
 {
     public string Date { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
-    public int ProductId { get; set; }
-    public Product Product { get; set; } = null!;
+
+    /// <summary>Null for a cash-only line: an amount handed to the supplier with no product.</summary>
+    public int? ProductId { get; set; }
+
+    public Product? Product { get; set; }
     public int SupplierId { get; set; }
     public Supplier Supplier { get; set; } = null!;
     public decimal UnitPrice { get; set; }

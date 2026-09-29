@@ -83,7 +83,7 @@ public partial class PurchaseInvoicesViewModel : MonthFilteredPageViewModelBase
                 {
                     Date = invoice.Date,
                     Quantity = invoice.Quantity,
-                    Product = invoice.Product.Name,
+                    Product = InvoiceLineLabels.ProductOrFallback(invoice.Product?.Name),
                     Supplier = invoice.Supplier.Name,
                     UnitPrice = invoice.UnitPrice.ToString("N2"),
                     TransportCost = invoice.TransportCost.ToString("N2"),

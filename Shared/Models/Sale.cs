@@ -4,8 +4,11 @@ public class Sale : BaseEntity
 {
     public string Date { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
-    public int ProductId { get; set; }
-    public Product Product { get; set; } = null!;
+
+    /// <summary>Null for a cash-only line: an amount received from the client with no product.</summary>
+    public int? ProductId { get; set; }
+
+    public Product? Product { get; set; }
     public int ClientId { get; set; }
     public Client Client { get; set; } = null!;
     public decimal UnitPrice { get; set; }

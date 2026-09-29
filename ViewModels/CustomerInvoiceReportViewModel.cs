@@ -132,9 +132,17 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
         row.ProductId = productId;
         row.RecalculateTotals();
 
-        if (row.Quantity <= 0)
+        if (row.HasProduct)
         {
-            StatusMessage = "الكمية يجب أن تكون أكبر من صفر.";
+            if (row.Quantity <= 0)
+            {
+                StatusMessage = "الكمية يجب أن تكون أكبر من صفر.";
+                return false;
+            }
+        }
+        else if (row.Paid == 0)
+        {
+            StatusMessage = "اكتب المبلغ في خانة «دفع» عندما لا يكون هناك منتج.";
             return false;
         }
 
@@ -206,25 +214,34 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
     public void ApplyProductSelection(SaleEntryRowViewModel row, string? productName)
     {
         if (string.IsNullOrWhiteSpace(productName))
+        {
+            // Clearing the product switches the line to a cash amount.
+            row.ProductName = string.Empty;
+            row.ProductId = null;
             return;
+        }
 
         row.ProductName = productName.Trim();
         if (TryResolveProduct(row, out var productId))
             row.ProductId = productId;
     }
 
-    private bool TryResolveProduct(SaleEntryRowViewModel row, out int productId)
+    /// <summary>
+    /// Resolves the row product to its id. An empty product name is valid: the line
+    /// then records a cash amount and gets a null id.
+    /// </summary>
+    private bool TryResolveProduct(SaleEntryRowViewModel row, out int? productId)
     {
-        productId = 0;
+        productId = null;
         if (string.IsNullOrWhiteSpace(row.ProductName))
-        {
-            StatusMessage = "اختر منتجاً قبل الحفظ.";
-            return false;
-        }
+            return true;
 
         var name = row.ProductName.Trim();
-        if (_saleProductIdsByName.TryGetValue(name, out productId))
+        if (_saleProductIdsByName.TryGetValue(name, out var id))
+        {
+            productId = id;
             return true;
+        }
 
         StatusMessage = "المنتج غير موجود أو ليس من نوع «للبيع».";
         return false;
@@ -236,7 +253,7 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
         if (row.Id == 0)
             return;
 
-        var label = string.IsNullOrWhiteSpace(row.ProductName) ? null : row.ProductName;
+        var label = row.Id > 0 ? row.ProductLabel : null;
         if (!await ConfirmDialogService.ConfirmDeleteAsync(label))
             return;
 
@@ -294,10 +311,12 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
 
     private SaleEntryRowViewModel ToRow(Sale sale)
     {
-        var name = sale.Product.Name;
-        if (!_saleProductIdsByName.ContainsKey(name))
+        var name = sale.Product?.Name;
+
+        // A null product is a cash amount line, so it has no name to add to the picker.
+        if (!string.IsNullOrWhiteSpace(name) && !_saleProductIdsByName.ContainsKey(name))
         {
-            _saleProductIdsByName[name] = sale.ProductId;
+            _saleProductIdsByName[name] = sale.ProductId!.Value;
             if (!SaleProductNames.Contains(name))
                 SaleProductNames.Add(name);
         }
@@ -307,7 +326,7 @@ public partial class CustomerInvoiceReportViewModel : MonthFilteredEditableGridV
             Id = sale.Id,
             Date = sale.Date,
             Quantity = sale.Quantity,
-            ProductName = name,
+            ProductName = name ?? string.Empty,
             ProductId = sale.ProductId,
             UnitPrice = sale.UnitPrice,
             TransportCost = sale.TransportCost,
