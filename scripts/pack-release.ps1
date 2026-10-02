@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 # Bump this when releasing, and keep it in step with <Version> in Recyclage.csproj.
 # The GitHub Actions workflow reads the version from the csproj instead, so this
 # value is only used when packing by hand.
-$Version = "1.0.0"
+$Version = "1.0.1"
 
 $env:PATH = "$env:USERPROFILE\.dotnet\tools;$env:PATH"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
