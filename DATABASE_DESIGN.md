@@ -1,4 +1,4 @@
-# Recyclage — Database Design
+﻿# Recyclage — Database Design
 
 Design document based on the handwritten ledger tables (فاتورة المشتريات، المبيعات، المصاريف، حساب آخر شهر، حساب بين شريكي، فاتورة زبون، فاتورة الفرنيسور).
 
@@ -130,6 +130,71 @@ erDiagram
 
 ---
 
+## فاتورة المشتريات / فاتورة المبيعات → `PurchaseInvoices` / `Sales`
+
+Your notebook columns map directly. Both ledgers share one column set — the only
+difference is the partner: `SupplierId` for purchases, `ClientId` for sales.
+
+```
+╔═════════════════════════════════════════════════════ فاتورة المشتريات  →  PurchaseInvoices ═════════════════════════════════════════════════════╗
+╠════════════╦════════════╦══════════════════╦════════════════════════╦════════════════════╦════════════╦══════════════╦════════════════╦════════════╦════════════╣
+║══ الباقي ══║═══ دفع ════║═ المجموع ب د.م ══║═ نقل مدفوع من المورد ══║══ نقل مدفوع مني ═══║═══ ثمن ════║════ مورد ════║═════ منتج ═════║══ الكمية ══║══ تاريخ ═══║
+╠════════════╬════════════╬══════════════════╬════════════════════════╬════════════════════╬════════════╬══════════════╬════════════════╬════════════╬════════════╣
+║ Remaining ═║═══ Paid ═══║═════ Total ══════║ TransportPaidByPartner ║ TransportPaidByMe ═║ UnitPrice ═║═ SupplierId ═║══ ProductId ═══║═ Quantity ═║═══ Date ═══║
+║ DECIMAL(18,2) ║ DECIMAL(18,2) ║═ DECIMAL(18,2) ══║════ DECIMAL(18,2) ═════║══ DECIMAL(18,2) ═══║ DECIMAL(18,2) ║═ INTEGER FK ═║ INTEGER NULL FK ║ DECIMAL(18,3) ║═══ TEXT ═══║
+╚════════════╪════════════╪══════════════════╪════════════════════════╪════════════════════╪════════════╪══════════════╪════════════════╪════════════╪════════════╝
+```
+
+```
+╔═══════════════════════════════════════════════════════════════════ فاتورة المبيعات  →  Sales ═══════════════════════════════════════════════════════════════════╗
+╠════════════╦════════════╦══════════════════╦════════════════════════╦════════════════════╦════════════╦══════════════╦════════════════╦════════════╦════════════╣
+║══ الباقي ══║═══ دفع ════║═ المجموع ب د.م ══║═ نقل مدفوع من الزبون ══║══ نقل مدفوع مني ═══║═══ ثمن ════║════ زبون ════║═════ منتج ═════║══ الكمية ══║══ تاريخ ═══║
+╠════════════╬════════════╬══════════════════╬════════════════════════╬════════════════════╬════════════╬══════════════╬════════════════╬════════════╬════════════╣
+║ Remaining ═║═══ Paid ═══║═════ Total ══════║ TransportPaidByPartner ║ TransportPaidByMe ═║ UnitPrice ═║══ ClientId ══║══ ProductId ═══║═ Quantity ═║═══ Date ═══║
+║ DECIMAL(18,2) ║ DECIMAL(18,2) ║═ DECIMAL(18,2) ══║════ DECIMAL(18,2) ═════║══ DECIMAL(18,2) ═══║ DECIMAL(18,2) ║═ INTEGER FK ═║ INTEGER NULL FK ║ DECIMAL(18,3) ║═══ TEXT ═══║
+╚════════════╪════════════╪══════════════════╪════════════════════════╪════════════════════╪════════════╪══════════════╪════════════════╪════════════╪════════════╝
+```
+          (read right → left in Arabic UI)
+
+| `#` | تاريخ | الكمية | منتج | مورد / زبون | ثمن | نقل مدفوع مني | نقل مدفوع من المورد / الزبون | المجموع ب د.م | دفع | الباقي |
+|-----|-------|--------|------|-------------|------|---------------|---------------------------|---------------|------|--------|
+| 1 | `Date` | `Quantity` | `ProductId` | `SupplierId` / `ClientId` | `UnitPrice` | `TransportPaidByMe` | `TransportPaidByPartner` | `Total` | `Paid` | `Remaining` |
+
+### The two transport columns
+
+Transport is recorded twice, because **who pays for it decides whether it costs us
+anything**:
+
+| Column | Arabic | In `Total`? |
+|--------|--------|-------------|
+| `TransportPaidByMe` | نقل مدفوع مني | **Yes** — it is our cost |
+| `TransportPaidByPartner` | نقل مدفوع من المورد (`Sales`: نقل مدفوع من الزبون) | **No** — the partner carries it |
+
+```
+  Transport we paid        10 × 20  +  30   = 230
+  Transport partner paid   10 × 20  +  30   = 200
+                             ───────  ▲
+                              excluded from Total
+```
+
+**Only one of the two is filled per line.** Typing into either box zeroes the other, so
+a line can never carry both at once; clearing a box leaves the other alone, so emptying
+one field never wipes the amount already in the other. A save that somehow carries both
+is rejected with «املأ خانة النقل واحدة فقط» rather than silently dropping an amount —
+`HasBothTransportFields` guards it.
+
+`Total` is therefore always `Quantity × UnitPrice + TransportPaidByMe`.
+
+The grid keeps a **summary row** under the last line, repeating three of the columns
+for the whole selection — «المجموع» (`GrandTotal»), «دفع» (`TotalPaid`) and «الباقي»
+(`TotalRemaining`), the last one painted red when negative.
+
+`ProductId` is **nullable** in both ledgers, so a line can carry handed money with no
+product; its `منتج` cell then reads «مبلغ نقدي». See
+[Cash-only lines](#cash-only-lines-مبلغ-نقدي) for the amounts it stores.
+
+---
+
 ## فاتورة المصاريف → `Expenses` table
 
 Your notebook columns map directly:
@@ -239,7 +304,8 @@ No FK — user types expense type as text on each row. No `ExpenseTypes` lookup 
 | `ProductId` | منتج | INTEGER **NULL** FK → `Products` (**ForBuying**) |
 | `SupplierId` | مورد | INTEGER FK → `Suppliers` |
 | `UnitPrice` | ثمن | DECIMAL(18,2) |
-| `TransportCost` | نقل | DECIMAL(18,2) |
+| `TransportPaidByMe` | نقل مدفوع مني | DECIMAL(18,2) |
+| `TransportPaidByPartner` | نقل مدفوع من المورد | DECIMAL(18,2) |
 | `Total` | المجموع ب DH | DECIMAL(18,2) |
 | `Paid` | دفع | DECIMAL(18,2) |
 | `Remaining` | الباقي | DECIMAL(18,2) |
@@ -253,7 +319,8 @@ No FK — user types expense type as text on each row. No `ExpenseTypes` lookup 
 | `ProductId` | منتج | INTEGER **NULL** FK → `Products` (**ForSale**) |
 | `ClientId` | زبون | INTEGER FK → `Clients` |
 | `UnitPrice` | ثمن | DECIMAL(18,2) |
-| `TransportCost` | نقل | DECIMAL(18,2) |
+| `TransportPaidByMe` | نقل مدفوع مني | DECIMAL(18,2) |
+| `TransportPaidByPartner` | نقل مدفوع من الزبون | DECIMAL(18,2) |
 | `Total` | المجموع ب DH | DECIMAL(18,2) |
 | `Paid` | دفع | DECIMAL(18,2) |
 | `Remaining` | الباقي | DECIMAL(18,2) |
@@ -266,7 +333,7 @@ empty and types the amount in «دفع».
 
 | Case | `ProductId` | `Total` | `Remaining` |
 |------|-------------|---------|-------------|
-| Product line | product id | `Quantity × UnitPrice + TransportCost` | `Total − Paid` |
+| Product line | product id | `Quantity × UnitPrice + TransportPaidByMe` | `Total − Paid` |
 | Cash-only line | `NULL` | `0` | `−Paid` |
 
 Because a cash-only line has no invoice value of its own, its `Total` is zero and the
@@ -384,6 +451,7 @@ Unchanged — filtered views on `PurchaseInvoices` / `Sales`.
 
 | Date | Change |
 |------|--------|
+| 2026-10-02 | **Split `TransportCost` into two mutually exclusive columns** in `PurchaseInvoices` and `Sales`: `TransportPaidByMe` (نقل مدفوع مني) and `TransportPaidByPartner` (نقل مدفوع من المورد / من الزبون). Only `TransportPaidByMe` feeds `Total`, so `Total = Quantity × UnitPrice + TransportPaidByMe`; transport the partner pays is recorded but excluded. Typing in either box zeroes the other, and a save carrying both is rejected («املأ خانة النقل واحدة فقط»). The old column was **renamed** to `TransportPaidByMe` rather than copied, so existing amounts — and every already-stored `Total` — stay correct; `TransportPaidByPartner` starts at 0. Migration `SplitTransportCosts`. |
 | 2026-09-29 | **Made `ProductId` nullable in `PurchaseInvoices` and `Sales`** so a line can record money handed over with no product. The amount is typed in «دفع»; such a line stores `Total = 0` and `Remaining = −Paid`, so a handed amount reads as a negative balance rather than as a purchase or a sale. Cash-only lines are labelled «مبلغ نقدي». Migration `AllowCashOnlyInvoiceLines`. |
 | 2026-09-28 | **Split `PartnerTransactions` into two independent tables**: `AyoubPayments` (دفع لي أيوب) and `MustafaReturns` (رجوع لمصطفى) — one table per partner ledger page. Existing rows were copied by SQL inside the migration, then the combined table was dropped. Money moved: 57000.00 → `AyoubPayments`, 2000.00 → `MustafaReturns`. 8 stored tables, 3 views. |
 | 2026-09-23 | **Restored `Expenses` table** for فاتورة المصاريف (Date, ExpenseType, Amount). 7 stored tables, 3 views. |

@@ -37,7 +37,8 @@
                 <DataGridTextColumn Header="منتج" Binding="{Binding Product}" Width="*"/>
                 <DataGridTextColumn Header="زبون" Binding="{Binding Client}" Width="*"/>
                 <DataGridTextColumn Header="ثمن" Binding="{Binding UnitPrice}" Width="100"/>
-                <DataGridTextColumn Header="نقل" Binding="{Binding TransportCost}" Width="100"/>
+                <DataGridTextColumn Header="نقل مدفوع مني" Binding="{Binding TransportPaidByMe}" Width="120"/>
+                <DataGridTextColumn Header="نقل مدفوع من الزبون" Binding="{Binding TransportPaidByPartner}" Width="120"/>
                 <DataGridTextColumn Header="المجموع" Binding="{Binding Total}" Width="110"/>
                 <DataGridTextColumn Header="دفع" Binding="{Binding Paid}" Width="100"/>
                 <DataGridTextColumn Header="الباقي" Binding="{Binding Remaining}" Width="100"/>
@@ -49,16 +50,16 @@
                     BorderBrush="{StaticResource TableGridLineBrush}"
                     BorderThickness="1,0,1,1"
                     Padding="0,8">
-                <Grid ColumnDefinitions="110,90,*,*,100,100,110,100,100">
-                    <StackPanel Grid.Column="6" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                <Grid ColumnDefinitions="110,90,*,*,100,120,120,110,100,100">
+                    <StackPanel Grid.Column="7" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="المجموع" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding GrandTotal, StringFormat={}{0:0.00} د.م}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="7" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                    <StackPanel Grid.Column="8" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="دفع" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding TotalPaid, StringFormat={}{0:0.00} د.م}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="8" Margin="8,0" Spacing="2" VerticalAlignment="Center">
+                    <StackPanel Grid.Column="9" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="الباقي" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding TotalRemaining, StringFormat={}{0:0.00} د.م}"
                                    Foreground="{Binding TotalRemaining, Converter={StaticResource NegativeAmountBrushConverter}}"

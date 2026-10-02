@@ -132,6 +132,14 @@ public partial class SupplierInvoiceReportViewModel : MonthFilteredEditableGridV
             return false;
         }
 
+        // Only one transport column is filled per line: typing in either box clears the
+        // other, so this only fires on a pasted or programmatic value.
+        if (row.HasBothTransportFields)
+        {
+            StatusMessage = "املأ خانة النقل واحدة فقط: «مدفوع مني» أو «مدفوع من المورد».";
+            return false;
+        }
+
         if (!TryResolveProduct(row, out var productId))
             return false;
 
@@ -173,7 +181,8 @@ public partial class SupplierInvoiceReportViewModel : MonthFilteredEditableGridV
                     ProductId = row.ProductId,
                     SupplierId = SelectedSupplier.Id,
                     UnitPrice = row.UnitPrice,
-                    TransportCost = row.TransportCost,
+                    TransportPaidByMe = row.TransportPaidByMe,
+                    TransportPaidByPartner = row.TransportPaidByPartner,
                     Total = row.Total,
                     Paid = row.Paid,
                     Remaining = row.Remaining
@@ -195,7 +204,8 @@ public partial class SupplierInvoiceReportViewModel : MonthFilteredEditableGridV
                 entity.ProductId = row.ProductId;
                 entity.SupplierId = SelectedSupplier.Id;
                 entity.UnitPrice = row.UnitPrice;
-                entity.TransportCost = row.TransportCost;
+                entity.TransportPaidByMe = row.TransportPaidByMe;
+                entity.TransportPaidByPartner = row.TransportPaidByPartner;
                 entity.Total = row.Total;
                 entity.Paid = row.Paid;
                 entity.Remaining = row.Remaining;
@@ -335,7 +345,8 @@ public partial class SupplierInvoiceReportViewModel : MonthFilteredEditableGridV
             ProductName = name ?? string.Empty,
             ProductId = invoice.ProductId,
             UnitPrice = invoice.UnitPrice,
-            TransportCost = invoice.TransportCost,
+            TransportPaidByMe = invoice.TransportPaidByMe,
+            TransportPaidByPartner = invoice.TransportPaidByPartner,
             Paid = invoice.Paid,
             Total = invoice.Total,
             Remaining = invoice.Remaining

@@ -27,7 +27,8 @@ public static class DemoData
             Product = "بلاستيك خام",
             Supplier = "محمد الفرنيسور",
             UnitPrice = "4,00 د.م",
-            TransportCost = "200,00 د.م",
+            TransportPaidByMe = "200,00 د.م",
+            TransportPaidByPartner = "0,00 د.م",
             Total = "2 200,00 د.م",
             Paid = "1 500,00 د.م",
             Remaining = "700,00 د.م"
@@ -39,7 +40,8 @@ public static class DemoData
             Product = "حديد خردة",
             Supplier = "شركة المعادن",
             UnitPrice = "3,50 د.م",
-            TransportCost = "350,00 د.م",
+            TransportPaidByMe = "350,00 د.م",
+            TransportPaidByPartner = "0,00 د.م",
             Total = "4 550,00 د.م",
             Paid = "4 550,00 د.م",
             Remaining = "0,00 د.م"
@@ -51,7 +53,8 @@ public static class DemoData
             Product = "ورق",
             Supplier = "يوسف التاجر",
             UnitPrice = "2,00 د.م",
-            TransportCost = "100,00 د.م",
+            TransportPaidByMe = "100,00 د.م",
+            TransportPaidByPartner = "0,00 د.م",
             Total = "700,00 د.م",
             Paid = "400,00 د.م",
             Remaining = "300,00 د.م"
@@ -67,7 +70,8 @@ public static class DemoData
             Product = "بلاستيك معاد تدويره",
             Client = "أحمد الزبون",
             UnitPrice = "6,00 د.م",
-            TransportCost = "150,00 د.م",
+            TransportPaidByMe = "150,00 د.م",
+            TransportPaidByPartner = "0,00 د.م",
             Total = "2 550,00 د.م",
             Paid = "2 000,00 د.م",
             Remaining = "550,00 د.م"
@@ -79,7 +83,8 @@ public static class DemoData
             Product = "حديد معاد تدويره",
             Client = "كريم الصناعة",
             UnitPrice = "5,50 د.م",
-            TransportCost = "0,00 د.م",
+            TransportPaidByMe = "0,00 د.م",
+            TransportPaidByPartner = "0,00 د.م",
             Total = "4 400,00 د.م",
             Paid = "4 400,00 د.م",
             Remaining = "0,00 د.م"
@@ -91,7 +96,8 @@ public static class DemoData
             Product = "ورق معاد تدويره",
             Client = "فاطمة",
             UnitPrice = "3,50 د.م",
-            TransportCost = "80,00 د.م",
+            TransportPaidByMe = "80,00 د.م",
+            TransportPaidByPartner = "0,00 د.م",
             Total = "780,00 د.م",
             Paid = "500,00 د.م",
             Remaining = "280,00 د.م"

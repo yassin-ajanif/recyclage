@@ -12,7 +12,16 @@ public class Sale : BaseEntity
     public int ClientId { get; set; }
     public Client Client { get; set; } = null!;
     public decimal UnitPrice { get; set; }
-    public decimal TransportCost { get; set; }
+
+    /// <summary>Transport we pay ourselves. Added into <see cref="Total"/>.</summary>
+    public decimal TransportPaidByMe { get; set; }
+
+    /// <summary>
+    /// Transport the client pays. Kept out of <see cref="Total"/> — it is not an
+    /// amount added to this invoice. Only one of the two transport fields is filled.
+    /// </summary>
+    public decimal TransportPaidByPartner { get; set; }
+
     public decimal Total { get; set; }
     public decimal Paid { get; set; }
     public decimal Remaining { get; set; }

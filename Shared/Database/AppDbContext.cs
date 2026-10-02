@@ -47,7 +47,8 @@ public class AppDbContext : DbContext
             e.Property(p => p.Date).IsRequired().HasMaxLength(10);
             e.Property(p => p.Quantity).HasPrecision(18, 3);
             e.Property(p => p.UnitPrice).HasPrecision(18, 2);
-            e.Property(p => p.TransportCost).HasPrecision(18, 2);
+            e.Property(p => p.TransportPaidByMe).HasPrecision(18, 2);
+            e.Property(p => p.TransportPaidByPartner).HasPrecision(18, 2);
             e.Property(p => p.Total).HasPrecision(18, 2);
             e.Property(p => p.Paid).HasPrecision(18, 2);
             e.Property(p => p.Remaining).HasPrecision(18, 2);
@@ -63,7 +64,8 @@ public class AppDbContext : DbContext
             e.Property(s => s.Date).IsRequired().HasMaxLength(10);
             e.Property(s => s.Quantity).HasPrecision(18, 3);
             e.Property(s => s.UnitPrice).HasPrecision(18, 2);
-            e.Property(s => s.TransportCost).HasPrecision(18, 2);
+            e.Property(s => s.TransportPaidByMe).HasPrecision(18, 2);
+            e.Property(s => s.TransportPaidByPartner).HasPrecision(18, 2);
             e.Property(s => s.Total).HasPrecision(18, 2);
             e.Property(s => s.Paid).HasPrecision(18, 2);
             e.Property(s => s.Remaining).HasPrecision(18, 2);

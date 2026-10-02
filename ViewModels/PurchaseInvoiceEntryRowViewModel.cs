@@ -9,7 +9,8 @@ public partial class PurchaseInvoiceEntryRowViewModel : DatedEditableRowViewMode
     private decimal _snapshotQuantity;
     private int? _snapshotProductId;
     private decimal _snapshotUnitPrice;
-    private decimal _snapshotTransportCost;
+    private decimal _snapshotTransportPaidByMe;
+    private decimal _snapshotTransportPaidByPartner;
     private decimal _snapshotPaid;
 
     [ObservableProperty]
@@ -25,8 +26,16 @@ public partial class PurchaseInvoiceEntryRowViewModel : DatedEditableRowViewMode
     [ObservableProperty]
     private decimal _unitPrice;
 
+    /// <summary>Transport we pay ourselves. Added into <see cref="Total"/>.</summary>
     [ObservableProperty]
-    private decimal _transportCost;
+    private decimal _transportPaidByMe;
+
+    /// <summary>
+    /// Transport the supplier pays. Kept out of <see cref="Total"/>. Filling this
+    /// clears <see cref="TransportPaidByMe"/>, so the two never carry a value at once.
+    /// </summary>
+    [ObservableProperty]
+    private decimal _transportPaidByPartner;
 
     [ObservableProperty]
     private decimal _paid;
@@ -53,8 +62,16 @@ public partial class PurchaseInvoiceEntryRowViewModel : DatedEditableRowViewMode
         || (string.IsNullOrWhiteSpace(ProductName)
             && Quantity == 0
             && UnitPrice == 0
-            && TransportCost == 0
+            && TransportPaidByMe == 0
+            && TransportPaidByPartner == 0
             && Paid == 0);
+
+    /// <summary>
+    /// Only one transport field may carry a value. Typing in either box zeroes the
+    /// other, so this should stay false in normal use; the save path rejects it as a
+    /// safety net rather than silently dropping an amount.
+    /// </summary>
+    public bool HasBothTransportFields => TransportPaidByMe != 0m && TransportPaidByPartner != 0m;
 
     public void AttachProductNames(ObservableCollection<string> productNames) => ProductNames = productNames;
 
@@ -70,21 +87,38 @@ public partial class PurchaseInvoiceEntryRowViewModel : DatedEditableRowViewMode
     }
 
     /// <summary>
-    /// A product line totals quantity × unit price plus transport. A line with no
-    /// product records money handed over, so it has no invoice value of its own:
-    /// the total stays zero and the handed amount lands on Remaining as a negative
-    /// balance (hand 100 → Total 0, Remaining −100).
+    /// A product line totals quantity × unit price plus the transport we pay
+    /// ourselves. Transport paid by the supplier is deliberately left out — it never
+    /// adds to what this invoice costs us. A line with no product records money handed
+    /// over, so it has no invoice value of its own: the total stays zero and the handed
+    /// amount lands on Remaining as a negative balance (hand 100 → Total 0,
+    /// Remaining −100).
     /// </summary>
     public void RecalculateTotals()
     {
-        Total = HasProduct ? Quantity * UnitPrice + TransportCost : 0m;
+        Total = HasProduct ? Quantity * UnitPrice + TransportPaidByMe : 0m;
         Remaining = Total - Paid;
     }
 
     partial void OnQuantityChanged(decimal value) => RecalculateTotals();
     partial void OnUnitPriceChanged(decimal value) => RecalculateTotals();
-    partial void OnTransportCostChanged(decimal value) => RecalculateTotals();
     partial void OnPaidChanged(decimal value) => RecalculateTotals();
+
+    partial void OnTransportPaidByMeChanged(decimal value)
+    {
+        // Filling one transport box empties the other. Clearing a box leaves the other
+        // alone, so zeroing a field never wipes the amount already recorded there.
+        if (value != 0m)
+            TransportPaidByPartner = 0m;
+        RecalculateTotals();
+    }
+
+    partial void OnTransportPaidByPartnerChanged(decimal value)
+    {
+        if (value != 0m)
+            TransportPaidByMe = 0m;
+        RecalculateTotals();
+    }
 
     protected override void CaptureSnapshot()
     {
@@ -93,7 +127,8 @@ public partial class PurchaseInvoiceEntryRowViewModel : DatedEditableRowViewMode
         _snapshotQuantity = Quantity;
         _snapshotProductId = ProductId;
         _snapshotUnitPrice = UnitPrice;
-        _snapshotTransportCost = TransportCost;
+        _snapshotTransportPaidByMe = TransportPaidByMe;
+        _snapshotTransportPaidByPartner = TransportPaidByPartner;
         _snapshotPaid = Paid;
     }
 
@@ -104,7 +139,8 @@ public partial class PurchaseInvoiceEntryRowViewModel : DatedEditableRowViewMode
         Quantity = _snapshotQuantity;
         ProductId = _snapshotProductId;
         UnitPrice = _snapshotUnitPrice;
-        TransportCost = _snapshotTransportCost;
+        TransportPaidByMe = _snapshotTransportPaidByMe;
+        TransportPaidByPartner = _snapshotTransportPaidByPartner;
         Paid = _snapshotPaid;
         RecalculateTotals();
     }
@@ -116,7 +152,8 @@ public partial class PurchaseInvoiceEntryRowViewModel : DatedEditableRowViewMode
         Quantity = 0;
         ProductId = null;
         UnitPrice = 0;
-        TransportCost = 0;
+        TransportPaidByMe = 0;
+        TransportPaidByPartner = 0;
         Paid = 0;
         RecalculateTotals();
     }

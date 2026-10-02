@@ -86,7 +86,8 @@ public partial class SalesViewModel : MonthFilteredPageViewModelBase
                     Product = InvoiceLineLabels.ProductOrFallback(sale.Product?.Name),
                     Client = sale.Client.Name,
                     UnitPrice = sale.UnitPrice.ToString("N2"),
-                    TransportCost = sale.TransportCost.ToString("N2"),
+                    TransportPaidByMe = sale.TransportPaidByMe.ToString("N2"),
+                    TransportPaidByPartner = sale.TransportPaidByPartner.ToString("N2"),
                     Total = sale.Total.ToString("N2"),
                     Paid = sale.Paid.ToString("N2"),
                     Remaining = sale.Remaining.ToString("N2")
