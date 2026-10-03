@@ -6,7 +6,7 @@
              x:DataType="vm:PurchaseInvoicesViewModel"
              FlowDirection="RightToLeft">
 
-    <Grid RowDefinitions="Auto,*" Margin="24">
+    <Grid RowDefinitions="Auto,*" Margin="2">
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,16">
             <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,16,0">
                 <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Stretch" TextAlignment="Right"/>
@@ -33,12 +33,12 @@
                       BorderThickness="1,1,1,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="تاريخ" Binding="{Binding Date}" Width="110"/>
-                <DataGridTextColumn Header="الكمية" Binding="{Binding Quantity}" Width="90"/>
+                <DataGridTextColumn Header="الكمية" Binding="{Binding Quantity}" Width="60"/>
                 <DataGridTextColumn Header="منتج" Binding="{Binding Product}" Width="*"/>
                 <DataGridTextColumn Header="مورد" Binding="{Binding Supplier}" Width="160" MinWidth="140"/>
-                <DataGridTextColumn Header="ثمن" Binding="{Binding UnitPrice}" Width="100"/>
-                <DataGridTextColumn Header="نقل مدفوع مني" Binding="{Binding TransportPaidByMe}" Width="120"/>
-                <DataGridTextColumn Header="نقل مدفوع من المورد" Binding="{Binding TransportPaidByPartner}" Width="120"/>
+                <DataGridTextColumn Header="ثمن" Binding="{Binding UnitPrice}" Width="70"/>
+                <DataGridTextColumn Header="نقل مدفوع مني" Binding="{Binding TransportPaidByMe}" Width="60"/>
+                <DataGridTextColumn Header="نقل مدفوع من المورد" Binding="{Binding TransportPaidByPartner}" Width="100"/>
                 <DataGridTextColumn Header="المجموع" Binding="{Binding Total}" Width="110"/>
                 <DataGridTextColumn Header="دفع" Binding="{Binding Paid}" Width="100"/>
                 <DataGridTextColumn Header="الباقي" Binding="{Binding Remaining}" Width="100"/>
@@ -50,7 +50,7 @@
                     BorderBrush="{StaticResource TableGridLineBrush}"
                     BorderThickness="1,0,1,1"
                     Padding="0,8">
-                <Grid ColumnDefinitions="110,90,*,160,100,120,120,110,100,100">
+                <Grid ColumnDefinitions="110,60,*,160,70,100,100,110,100,100">
                     <StackPanel Grid.Column="7" Margin="8,0" Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="المجموع" FontWeight="SemiBold" FontSize="13" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding GrandTotal, StringFormat={}{0:0.00} د.م}" FontWeight="SemiBold" HorizontalAlignment="Center"/>

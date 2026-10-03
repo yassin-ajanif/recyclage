@@ -21,6 +21,11 @@
         <SolidColorBrush x:Key="InputFieldBackgroundBrush" Color="{StaticResource InputFieldBackgroundColor}"/>
         <SolidColorBrush x:Key="ActionButtonTextBrush" Color="White"/>
         <conv:NegativeAmountBrushConverter x:Key="NegativeAmountBrushConverter"/>
+        <!-- The Fluent DataGridColumnHeader template reserves a fixed-width column for the
+             sort arrow (DataGridSortIconMinWidth = 32) and keeps it even while the arrow
+             is hidden, because a ColumnDefinition MinWidth ignores child visibility.
+             Zeroing it here gives the whole column width back to the title. -->
+        <x:Double x:Key="DataGridSortIconMinWidth">0</x:Double>
     </Application.Resources>
 
     <Application.DataTemplates>
@@ -55,16 +60,21 @@
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="MinHeight" Value="52"/>
-            <Setter Property="Padding" Value="8,10"/>
+            <!-- Headers carry no inset of their own: the column width is the whole
+                 budget, so any padding here eats space the title needs to stay on one line. -->
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="BorderBrush" Value="{StaticResource TableGridLineBrush}"/>
         </Style>
         <Style Selector="DataGridColumnHeader TextBlock">
-            <Setter Property="TextAlignment" Value="Right"/>
+            <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
